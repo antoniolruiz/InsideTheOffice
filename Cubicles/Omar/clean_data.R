@@ -15,13 +15,17 @@ library(tidyr)
 clean_text <- function(text, ct_list, sw_list){
   cleaned_text <- text %>% 
     tolower %>% 
+    remove_replacement_character %>% 
     remove_apostrophes %>% 
+    remove_punctuation %>% 
     underscore_common_terms(ct_list) %>% 
     remove_stopwords(sw_list)
   return(cleaned_text)
 }
 
+remove_replacement_character <- function(text) gsub('\uFFFD', '', text)
 remove_apostrophes <- function(text) gsub("'", '', text)
+remove_punctuation <- function(text) gsub('[[:punct:] ]+', ' ', text)
 
 underscore_common_terms <- function(text, ct_list) {
   for (ct in ct_list){
@@ -69,6 +73,14 @@ remove_wrylies <- function(line) {
   return(gsub("\\[.*?\\]", "", line))
 }
 
+count_ngrams <- function(df, var, n) {
+  df$var <- df[[var]]
+  ngrams <- df %>%
+    unnest_tokens(ngram, var, token = "ngrams", n = n) %>%
+    count(ngram, sort = TRUE)
+  return(ngrams)
+}
+
 #### SCRIPT ####
 
 ct_list = list(
@@ -76,21 +88,22 @@ ct_list = list(
   "thats what she said"
 )
 
-sw_list <- stopwords("en")
+sw_list <- stopwords("en") %>% remove_apostrophes()
 
-cleaned_df <- theoffice_df %>% 
+wrylies_dialogue_df <- theoffice_df %>% 
   mutate(
-    cleaned_text = clean_text(line_text, ct_list, sw_list),
-    wrylies = get_wrylies(cleaned_text),
-    dialogue = remove_wrylies(cleaned_text)
+    wrylies = get_wrylies(line_text),
+    dialogue = remove_wrylies(line_text)
   )
+
+dialogues_df <- wrylies_dialogue_df %>% 
+  filter(!deleted) %>% 
+  select(id, season, episode, scene, speaker, dialogue) %>% 
+  mutate(filt_dialogue = clean_text(dialogue, ct_list, sw_list))
 
 # tok_line_text = tokenize_words(dialogue, stopwords = stopwords("en"))
 
-office_bigrams <- cleaned_df %>%
-  unnest_tokens(bigram, dialogue, token = "ngrams", n = 2) %>%
-  count(bigram, sort = TRUE)
-
-office_trigrams <- cleaned_df %>%
-  unnest_tokens(trigram, dialogue, token = "ngrams", n = 3) %>%
-  count(trigram, sort = TRUE)
+dialogues_2grams <- count_ngrams(dialogues_df, "filt_dialogue", 2)
+dialogues_3grams <- count_ngrams(dialogues_df, "filt_dialogue", 3)
+dialogues_4grams <- count_ngrams(dialogues_df, "filt_dialogue", 4)
+dialogues_5grams <- count_ngrams(dialogues_df, "filt_dialogue", 5)
