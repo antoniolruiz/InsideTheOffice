@@ -12,11 +12,12 @@ library(tidyr)
 
 #### FUNCTIONS ####
 
-clean_text <- function(text, ct_list){
+clean_text <- function(text, ct_list, sw_list){
   cleaned_text <- text %>% 
     tolower %>% 
     remove_apostrophes %>% 
-    underscore_common_terms(ct_list)
+    underscore_common_terms(ct_list) %>% 
+    remove_stopwords(sw_list)
   return(cleaned_text)
 }
 
@@ -37,8 +38,23 @@ underscore_common_term <- function(text, common_term) {
   return(underscored_text)
 }
 
-paste_words <- function(words_list, sepa) {
-  return(do.call(paste, c(as.list(words_list), sep = sepa)))
+paste_words <- function(words_list, sep) {
+  return(do.call(paste, c(as.list(words_list), sep = sep)))
+}
+
+remove_stopwords <- function(text, sw_list) {
+  text_wo_sw <- lapply(unlist(text), remove_stopwords_by_line, sw_list = sw_list)
+  return(unlist(text_wo_sw))
+}
+
+remove_stopwords_by_line <- function(line, sw_list) {
+  words <- unlist(strsplit(line, " "))
+  non_stop_words <- words[!words %in% sw_list]
+  if (length(non_stop_words) == 0) {
+    non_stop_words <- " "
+  }
+  non_stop_line <- paste_words(non_stop_words, " ")
+  return(non_stop_line)
 }
 
 get_wrylies <- function(line) {
@@ -60,9 +76,11 @@ ct_list = list(
   "thats what she said"
 )
 
+sw_list <- stopwords("en")
+
 cleaned_df <- theoffice_df %>% 
   mutate(
-    cleaned_text = clean_text(line_text, ct_list),
+    cleaned_text = clean_text(line_text, ct_list, sw_list),
     wrylies = get_wrylies(cleaned_text),
     dialogue = remove_wrylies(cleaned_text)
   )
@@ -71,15 +89,8 @@ cleaned_df <- theoffice_df %>%
 
 office_bigrams <- cleaned_df %>%
   unnest_tokens(bigram, dialogue, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stopwords("en")) %>%
-  filter(!word2 %in% stopwords("en")) %>% 
-  count(word1, word2, sort = TRUE)
+  count(bigram, sort = TRUE)
 
 office_trigrams <- cleaned_df %>%
   unnest_tokens(trigram, dialogue, token = "ngrams", n = 3) %>%
-  separate(trigram, c("word1", "word2", "word3"), sep = " ") %>%
-  filter(!word1 %in% stopwords("en")) %>%
-  filter(!word2 %in% stopwords("en")) %>% 
-  filter(!word3 %in% stopwords("en")) %>% 
-  count(word1, word2, word3, sort = TRUE)
+  count(trigram, sort = TRUE)
