@@ -1,0 +1,118 @@
+---
+title: "Homework 4"
+author: "Jose Lopez Torres (jll2239)"
+date: "November 14, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+library(GGally)
+library(forcats)
+library(dplyr)
+library(extracat)
+library(scales)
+library(devtools)
+library(gsheet)
+theoffice_url <- 'https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974534'
+theoffice_df <- gsheet2tbl(theoffice_url)
+theoffice_df$season <- as.factor(theoffice_df$season)
+theoffice_df$episode <- as.factor(theoffice_df$episode)
+theoffice_df$scene <- as.factor(theoffice_df$scene)
+theoffice_df$speaker <- as.factor(theoffice_df$speaker)
+```
+
+## Question 3
+
+Begin the analysis of one variable in the dataset you are using the final project. As this is an individual homework assignment, each group member should choose a different variable. Choose three visualizations as appropriate to show the distribution of the variable, conditioned on another variable if desired (for example, the distribution of income by region).  Write a few sentences describing what you found and what new questions your visualizations have generated. (Faceted graphs count as one graph; graphs put together with grid.arrange() or similar count as multiple graphs.)
+
+### The Office dialogues
+
+For our project, we're exploring a dataset that contains the script of the American Version of the sitcom "The Office". This dataset contains several variables, such as the season, episode and speaker of a dialogue line.
+
+```{r glimpse}
+glimpse(theoffice_df)
+```
+
+### Speaker
+
+For my analysis, I chose the variable "speaker", that represents the character that narrates each line in the script.
+
+#### 1)
+
+First, I want to know what characters have the most lines in the series.
+
+```{r p1, echo=TRUE}
+
+by_char <- theoffice_df %>% 
+  group_by(speaker) %>% 
+  mutate(lns = n()) %>% 
+  filter(lns>300)
+
+ggplot(by_char, aes(x=fct_reorder(by_char$speaker, lns, .desc = FALSE)), stat = "count") + 
+  geom_bar(fill = "lightblue", color = "black") + 
+  coord_flip() + 
+  labs(title = "Who has the most dialogues?", x = "Character", y="Total number of lines")
+
+```
+
+In this case, we can see that Michael, Dwight, Jim, Pam and Andy have far more dialogue lines than the rest of the cast. Michael has almost 5,000 more lines than Dwight (probably due to all his interactions with the documentary crew). In order to see this, I dropped any character with fewer than 300 lines in the entire series.
+
+#### 2)
+
+Next, I would like to know what character speaks the longest dialogues, in average.
+
+```{r p2, echo=TRUE}
+
+by_avg <- by_char %>% 
+  mutate(len = nchar(line_text)) %>% 
+  select(speaker, len, lns) %>% 
+  summarize(dialogue = sum(len)/mean(lns))
+
+ggplot(by_avg, aes(x = reorder(speaker, dialogue), y = dialogue)) + 
+  geom_point(color = "blue") + 
+  coord_flip() + 
+  labs(title = "Who speaks the longest lines?", x = "Character", y="Average characters per line of speech") + 
+  lims(y=c(40,85))
+
+```
+
+There doesn't seem to be a relationship between characters with the most lines and characters with the longest lines. I think this is understandable, as dialogue requires a minimum length to make it understandable. It is interesting, though that 4 of the characters with shortest lines, on average, are female, and despite Pam being the 4th character with the most lines in the series, she's one of the regular characters with the shortest lines.
+
+#### 3)
+
+Finally, I think it'd be interesting to know what character repeats the most famous joke on the series:
+
+```{r p3, echo=TRUE}
+
+by_tws <- by_char %>% 
+  mutate(joke = sum(str_detect(line_text, "That's what she said"))) %>% 
+  select(speaker, joke) %>%
+  filter(joke>0) %>%
+  summarize(TWSS = mean(joke))
+
+ggplot(by_tws, aes(x=reorder(speaker, -TWSS), y=TWSS)) +
+  geom_col(fill = "lightblue", color = "black") + 
+  labs(title = "That's what who said?", x = "Character", y="Total number of times")
+
+```
+
+
+
+### What's next?
+
+From the first plot, I realized that there are some spelling errors and descriptions in the "speaker" variable, which means that we will need to focus on this column and clean it for our analysis.
+
+I think it would also be interesting to look who's interacting on each conversation. Probably Dwight and Michael have more scenes alone in front of the camera and that's why they are so common in the dialogues. How many conversations take place between Pam and Jim, for instance?
+
+From the second plot, I think it'd be interesting to know if there's a relationship between length in characters and actual speech said by each character. I think it would also be interesting to analyze on average who's the smartest (which could be measured as the one using the longest words). Maybe some of the lines describe actions, which might explain their length.
+
+From the last plot, I think it's necessary to add new variations of the joke, as I think these numbers are too low. There might be some punctuation differences, typos or other reasons why there are so few ocurrences, or maybe some of the times when it took place it wasn't scripted.
+
+There's still much more to learn about this dataset, and I am looking forward to working with my teammates to see what other questions come up for the final project.
+

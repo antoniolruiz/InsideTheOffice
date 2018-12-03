@@ -1,0 +1,81 @@
+---
+title: "The Office Report"
+author: "Carlos Omar Pardo, Antonio Lopez Ruiz, Jose Lopez Torres"
+date: "December 3, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+Explain why you chose this topic, and the questions you are interested in studying.
+
+List team members and a description of how each contributed to the project.
+
+## Questions from HW4
+
+### Omar
+
+\textcolor{blue}{It's easy to see there is a decreasing behavior for all the seasons, meaning that most of the scenes contained just a few lines. This situation could be counterintuitive for most of the series, as one would expect constant dialogue between the characters, and therefore scenes with more than one or two lines. However, taking into account \textit{The Office}'s documentary style, it makes sense, because many times there is just one character talking to the camera. For further investigation, it would be interesting to know how long in time are these one-line scenes, and if they can be compared to a typical scene of a different kind series.}
+
+### Jose
+
+From the first plot, I realized that there are some spelling errors and descriptions in the "speaker" variable, which means that we will need to focus on this column and clean it for our analysis.
+
+I think it would also be interesting to look who's interacting on each conversation. Probably Dwight and Michael have more scenes alone in front of the camera and that's why they are so common in the dialogues. How many conversations take place between Pam and Jim, for instance?
+
+From the second plot, I think it'd be interesting to know if there's a relationship between length in characters and actual speech said by each character. I think it would also be interesting to analyze on average who's the smartest (which could be measured as the one using the longest words). Maybe some of the lines describe actions, which might explain their length.
+
+From the last plot, I think it's necessary to add new variations of the joke, as I think these numbers are too low. There might be some punctuation differences, typos or other reasons why there are so few ocurrences, or maybe some of the times when it took place it wasn't scripted.
+
+There's still much more to learn about this dataset, and I am looking forward to working with my teammates to see what other questions come up for the final project.
+
+## Antonio
+
+# Description of Data
+
+Describe how the data was collected, how you accessed it, and any other noteworthy features.
+
+# Analysis of data quality
+
+Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
+
+# Main Analysis
+
+Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
+
+# Executive Summary
+
+Provide a short nontechnical summary of the most revealing findings of your analysis written for a nontechnical audience. The length should be approximately two pages (if we were using pages…) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
+
+Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. You do not have to present your work to the class! However, you may choose to present your work as your community contribution, in which case you need to email me to set a date before the community contribution due date. (The presentation itself may be later.)
+
+# Interactive component
+
+Select one (or more) of your key findings to present in an interactive format. Be selective in the choices that you present to the user; the idea is that in 5-10 minutes, users should have a good sense of the question(s) that you are interested in and the trends you’ve identified in the data. In other words, they should understand the value of the analysis, be it business value, scientific value, general knowledge, etc.
+
+# Conclusion
+
+Discuss limitations and future directions, lessons learned.
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
