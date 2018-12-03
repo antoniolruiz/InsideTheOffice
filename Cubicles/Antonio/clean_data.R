@@ -1,3 +1,4 @@
+
 library(readr)
 
 theoffice_df <- read_csv('the-office-lines - scripts.csv')
@@ -11,15 +12,20 @@ library(tidyr)
 
 #### FUNCTIONS ####
 
-clean_text <- function(text, ct_list){
+clean_text <- function(text, ct_list, sw_list){
   cleaned_text <- text %>% 
     tolower %>% 
+    remove_replacement_character %>% 
     remove_apostrophes %>% 
-    underscore_common_terms(ct_list)
+    remove_punctuation %>% 
+    underscore_common_terms(ct_list) %>% 
+    remove_stopwords(sw_list)
   return(cleaned_text)
 }
 
+remove_replacement_character <- function(text) gsub('\uFFFD', '', text)
 remove_apostrophes <- function(text) gsub("'", '', text)
+remove_punctuation <- function(text) gsub('[[:punct:] ]+', ' ', text)
 
 underscore_common_terms <- function(text, ct_list) {
   for (ct in ct_list){
@@ -36,8 +42,23 @@ underscore_common_term <- function(text, common_term) {
   return(underscored_text)
 }
 
-paste_words <- function(words_list, sepa) {
-  return(do.call(paste, c(as.list(words_list), sep = sepa)))
+paste_words <- function(words_list, sep) {
+  return(do.call(paste, c(as.list(words_list), sep = sep)))
+}
+
+remove_stopwords <- function(text, sw_list) {
+  text_wo_sw <- lapply(unlist(text), remove_stopwords_by_line, sw_list = sw_list)
+  return(unlist(text_wo_sw))
+}
+
+remove_stopwords_by_line <- function(line, sw_list) {
+  words <- unlist(strsplit(line, " "))
+  non_stop_words <- words[!words %in% sw_list]
+  if (length(non_stop_words) == 0) {
+    non_stop_words <- " "
+  }
+  non_stop_line <- paste_words(non_stop_words, " ")
+  return(non_stop_line)
 }
 
 get_wrylies <- function(line) {
@@ -52,9 +73,17 @@ remove_wrylies <- function(line) {
   return(gsub("\\[.*?\\]", "", line))
 }
 
+count_ngrams <- function(df, var, n) {
+  df$var <- df[[var]]
+  ngrams <- df %>%
+    unnest_tokens(ngram, var, token = "ngrams", n = n) %>%
+    count(ngram, sort = TRUE)
+  return(ngrams)
+}
+
 #### SCRIPT ####
 
-ct_list = list(
+ct_list = list(ct_list = list(
   "dunder mifflin",
   "thats what she said",
   "bob vance vance refrigeration",
@@ -139,46 +168,24 @@ ct_list = list(
   
 )
 
-cleaned_df <- theoffice_df %>% 
+)
+
+sw_list <- stopwords("en") %>% remove_apostrophes()
+
+wrylies_dialogue_df <- theoffice_df %>% 
   mutate(
-    cleaned_text = clean_text(line_text, ct_list),
-    wrylies = get_wrylies(cleaned_text),
-    dialogue = remove_wrylies(cleaned_text)
+    wrylies = get_wrylies(line_text),
+    dialogue = remove_wrylies(line_text)
   )
+
+dialogues_df <- wrylies_dialogue_df %>% 
+  filter(!deleted) %>% 
+  select(id, season, episode, scene, speaker, dialogue) %>% 
+  mutate(filt_dialogue = clean_text(dialogue, ct_list, sw_list))
 
 # tok_line_text = tokenize_words(dialogue, stopwords = stopwords("en"))
 
-office_bigrams <- cleaned_df %>%
-  unnest_tokens(bigram, dialogue, token = "ngrams", n = 2) %>%
-  separate(bigram, c("word1", "word2"), sep = " ") %>%
-  filter(!word1 %in% stopwords("en")) %>%
-  filter(!word2 %in% stopwords("en")) %>% 
-  count(word1, word2, sort = TRUE)
-
-office_trigrams <- cleaned_df %>%
-  unnest_tokens(trigram, dialogue, token = "ngrams", n = 3) %>%
-  separate(trigram, c("word1", "word2", "word3"), sep = " ") %>%
-  filter(!word1 %in% stopwords("en")) %>%
-  filter(!word2 %in% stopwords("en")) %>% 
-  filter(!word3 %in% stopwords("en")) %>% 
-  count(word1, word2, word3, sort = TRUE)
-
-office_tetragrams <- cleaned_df %>%
-  unnest_tokens(tetragram, dialogue, token = "ngrams", n = 4) %>%
-  separate(tetragram, c("word1", "word2", "word3","word4"), sep = " ") %>%
-  filter(!word1 %in% stopwords("en")) %>%
-  filter(!word2 %in% stopwords("en")) %>% 
-  filter(!word3 %in% stopwords("en")) %>% 
-  filter(!word4 %in% stopwords("en")) %>% 
-  count(word1, word2, word3,word4, sort = TRUE)
-
-office_fivegrams <- cleaned_df %>%
-  unnest_tokens(fivegram, dialogue, token = "ngrams", n = 5) %>%
-  separate(fivegram, c("word1", "word2", "word3","word4","word5"), sep = " ") %>%
-  filter(!word1 %in% stopwords("en")) %>%
-  filter(!word2 %in% stopwords("en")) %>% 
-  filter(!word3 %in% stopwords("en")) %>% 
-  filter(!word4 %in% stopwords("en")) %>% 
-  filter(!word5 %in% stopwords("en")) %>% 
-  count(word1, word2, word3,word4,word5, sort = TRUE)
-
+dialogues_2grams <- count_ngrams(dialogues_df, "filt_dialogue", 2)
+dialogues_3grams <- count_ngrams(dialogues_df, "filt_dialogue", 3)
+dialogues_4grams <- count_ngrams(dialogues_df, "filt_dialogue", 4)
+dialogues_5grams <- count_ngrams(dialogues_df, "filt_dialogue", 5)
