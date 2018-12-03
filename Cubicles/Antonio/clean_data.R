@@ -11,6 +11,27 @@ library(tidytext)
 library(tidyr)
 
 #### FUNCTIONS ####
+unify_names <- function(text) {
+  text <- gsub("David Wallace", "David", text)
+  text <- gsub("Deangelo", "DeAngelo", text)
+  text <- gsub("Todd Packer", "Todd", text)
+  text <- gsub("Packer", "Todd", text)
+  text <- gsub("Daryl", "Darryl", text)
+  text <- gsub("Robert California", "Robert", text)
+  return(text)
+}
+
+get_wrylies <- function(line) {
+  wrylies <- line %>% 
+    str_extract_all("\\[(.*?)\\]") %>% 
+    gsub("\\[|\\]", "", .)
+  wrylies <- ifelse(wrylies == "character(0)", NA, wrylies) 
+  return(wrylies)
+}
+
+remove_wrylies <- function(line) {
+  return(gsub("\\[.*?\\]", "", line))
+}
 
 clean_text <- function(text, ct_list, sw_list){
   cleaned_text <- text %>% 
@@ -59,18 +80,6 @@ remove_stopwords_by_line <- function(line, sw_list) {
   }
   non_stop_line <- paste_words(non_stop_words, " ")
   return(non_stop_line)
-}
-
-get_wrylies <- function(line) {
-  wrylies <- line %>% 
-    str_extract_all("\\[(.*?)\\]") %>% 
-    gsub("\\[|\\]", "", .)
-  wrylies <- ifelse(wrylies == "character(0)", NA, wrylies) 
-  return(wrylies)
-}
-
-remove_wrylies <- function(line) {
-  return(gsub("\\[.*?\\]", "", line))
 }
 
 count_ngrams <- function(df, var, n) {
@@ -167,11 +176,11 @@ ct_list = list(
   "nope nope nope nope nope"
 )
 
-sw_list <- stopwords(language = "en", source ='smart') %>% remove_apostrophes()
-stop_words$word
+sw_list <- stopwords("en") %>% remove_apostrophes()
 
 wrylies_dialogue_df <- theoffice_df %>% 
   mutate(
+    speaker = unify_names(speaker) %>% tolower(),
     wrylies = get_wrylies(line_text),
     dialogue = remove_wrylies(line_text)
   )
@@ -196,4 +205,37 @@ words_df <- dialogues_df %>%
 words_count <- table(words_df$word) %>% 
   as.data.frame() %>% 
   arrange(-Freq)
+
+characters <- dialogues_df %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq)
+
+#### Analyze interactions ####
+
+replace_characters <- function(text) {
+  text <- gsub("michael_scott", "michael", text)
+  text <- gsub("dwight_schrute", "dwight", text)
+  text <- gsub("nard_dog", "andy", text)
+  text <- gsub("tuna", "jim", text)
+  text <- gsub("jimbo", "jim", text)
+  return(text)
+}
+
+main_and_sec_chars <- characters$speaker[1:40] %>% tolower()
+
+interact_df <- words_df %>% 
+  mutate(word = replace_characters(unlist(word))) %>% 
+  filter(word %in% main_and_sec_chars)
+
+get_interactions_by_char <- function(char, interact_df) {
+  interact_char <- interact_df %>% 
+    filter(speaker == char)
+  interactions <- table(interact_char$word) %>% 
+    as.data.frame() %>% 
+    arrange(-Freq)
+  return(interactions)
+}
+
+get_interactions_by_char("kelly", interact_df)
 
