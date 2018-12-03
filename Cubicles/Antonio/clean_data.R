@@ -194,3 +194,6 @@ dialogues_2grams <- count_ngrams(dialogues_df, "filt_dialogue", 2)
 dialogues_3grams <- count_ngrams(dialogues_df, "filt_dialogue", 3)
 dialogues_4grams <- count_ngrams(dialogues_df, "filt_dialogue", 4)
 dialogues_5grams <- count_ngrams(dialogues_df, "filt_dialogue", 5)
+
+dialogues_df2 <- dialogues_df %>% 
+  mutate(words = tokenize_words(filt_dialogue))
