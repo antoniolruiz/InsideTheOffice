@@ -85,10 +85,90 @@ count_ngrams <- function(df, var, n) {
 
 ct_list = list(
   "dunder mifflin",
-  "thats what she said"
+  "thats what she said",
+  "bob vance vance refrigeration",
+  "just dont",
+  "david wallace",
+  "michael scott",
+  "oh god",
+  "new york",
+  "conference room",
+  "dwight schrute",
+  "dont even",
+  "whats going on",
+  "regional manager",
+  "jim halpert",
+  "andy bernard",
+  "mr scott",
+  "please dont",
+  "high school",
+  "valentines day",
+  "parking lot",
+  "paper company",
+  "ice cream",
+  "number two",
+  "wow thats",
+  "good news",
+  "sounds good",
+  "best friend",
+  "costumer service",
+  "planning committee",
+  "cell phone",
+  "cant even",
+  "number one",
+  "bob vance",
+  "robert california",
+  "nard dog",
+  "hey andy",
+  "schrute farms",
+  "please stop",
+  "hot dogs",
+  "scranton branch",
+  "just kidding",
+  "michael scarn",
+  "stanley hudson",
+  "god thats",
+  "ryan howard",
+  "todd packer",
+  "attention everyone",
+  "michael please",
+  "people think",
+  "michael michael",
+  "jim jim",
+  "hey pam",
+  "dwight dwight",
+  "pam pam",
+  "oh yeah",
+  "oh thank god",
+  "beep beep beep",
+  "yes yes yes yes yes",
+  "la la la la la",
+  "na na na na na",
+  "beep beep beep beep beep",
+  "go go go go go",
+  "blah blah blah blah blah",
+  "whoa whoa whoa whoa whoa",
+  "stop stop stop stop stop",
+  "im pretty sure",
+  "guys guys guys",
+  "okay okay okay",
+  "dont know",
+  "oh god",
+  "lets get",
+  "hey hey hey",
+  "whoa whoa whoa",
+  "go go go go",
+  "dont think",
+  "right now",
+  "im sorry",
+  "im gonna",
+  "im going",
+  "lets go",
+  "nope nope nope nope nope"
 )
 
 sw_list <- stopwords("en") %>% remove_apostrophes()
+stop_words$word
 
 wrylies_dialogue_df <- theoffice_df %>% 
   mutate(
@@ -107,3 +187,13 @@ dialogues_2grams <- count_ngrams(dialogues_df, "filt_dialogue", 2)
 dialogues_3grams <- count_ngrams(dialogues_df, "filt_dialogue", 3)
 dialogues_4grams <- count_ngrams(dialogues_df, "filt_dialogue", 4)
 dialogues_5grams <- count_ngrams(dialogues_df, "filt_dialogue", 5)
+
+words_df <- dialogues_df %>% 
+  separate_rows(., filt_dialogue, sep = " ", convert = TRUE) %>% 
+  rename(word = filt_dialogue) %>% 
+  filter(word != "")
+
+words_count <- table(words_df$word) %>% 
+  as.data.frame() %>% 
+  arrange(-Freq)
+
