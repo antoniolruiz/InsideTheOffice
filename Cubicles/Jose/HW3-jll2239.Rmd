@@ -1,0 +1,245 @@
+---
+title: "HW3"
+author: "Jose Lopez Torres (jll2239)"
+date: "October 23, 2018"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+library(lubridate)
+library(GGally)
+library(forcats)
+library(dplyr)
+library(gridExtra)
+library(extracat)
+library(pgmm)
+library(tidyquant)
+library(choroplethr)
+library(choroplethrMaps)
+library(choroplethrZip)
+library(scales)
+data(zip.regions)
+library(devtools)
+library(ggmosaic)
+library(magrittr)
+source("https://raw.githubusercontent.com/janhove/janhove.github.io/master/RCode/sortLvls.R")
+
+dogs <- read.csv(file="NYCdogs.csv", header=TRUE, sep=",", na.strings = c("n/a"))
+```
+
+For questions 1-4 in this problem set, we will work with a dataset on dogs of New York City, found here: https://project.wnyc.org/dogs-of-nyc/
+Background: The dataset is dated June 26, 2012. Although the data were originally produced by the NYC Department of Mental Health and Hygiene, it no longer seems to be available on any official NYC web site. (There is a 2016 dataset on dog licenses with different variables available here: https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp). Also of note is the fact that this dataset has 81,542 observations. The same summer, the New York City Economic Development Corporation estimated that there were 600,000 dogs in New York City (source: https://blog.nycpooch.com/2012/08/28/how-many-dogs-live-in-new-york-city/) Quite a difference! How many dogs were there really in 2012?!? Might be an interesting question to pursue for a final project, but for now we’ll work with what we’ve got.
+
+## 1. Missing Data
+
+##   a.
+
+Create a bar chart showing percent missing by variable.
+
+```{r mis1a, echo=TRUE}
+
+mis1 <- 100*round(colSums(is.na(dogs)/nrow(dogs)),2) %>% sort(decreasing = TRUE)
+
+barplot(mis1, ylim = c(0,90), xlab = "Variable", ylab = "Percentage NA", las = 2)
+
+```
+
+We can see here that the variables with the most NA values are the third color, secondary color and, far behind, dog name and dominant color.
+
+
+##    b.
+
+Use the extracat::visna() to graph missing patterns. Interpret the graph.
+
+```{r mis1b, echo=TRUE}
+visna(dogs, sort = "b")
+```
+
+Here it becomes evident that the most common combinations of missing data are only the third color or both the second and third colors. This might be because there are several dogs with only one dominant color, and whoever saved the data into the DB left the fields blank. After that, the third most common pattern are dogs with all the information, which is good for our purpose. After this, the frequency of combination patterns for NA values drops dramatically.
+
+The vertical frequencies corroborate the data we previously analyzed, where third color, followed by secondary color and - far behind - dog name. 
+
+##    c.
+
+Do dog_name missing patterns appear to be associated with the value of gender, Group or borough?
+
+```{r mis1c, echo=TRUE}
+dfdogna <- dogs %>% 
+  filter(is.na(dog_name)) %>%
+  select(gender, Group, borough)
+
+ggpairs(dfdogna, columns = 1:3, aes())
+
+```
+
+Using ggpairs, we can find some interesting insights on the relationship between the values for these variables. For instance, empty values are most commonly found for male dogs than for females. This relationship (male to female NAs) persists slightly across groups and boroughs.
+
+Furthermore, the dog name is missing for predominantly for 3 dog groups: Toy, Mutt and Non-sporting. This seems to be regardless of whether the dogs of this type are male or female.
+
+Finally, the borooughs with the highest predominance of missing dog name are Brooklyn, Manhattan and Queens. The relationship doesn't seem to vary across groups or gender within each borough.
+
+## 2. Dates
+
+## a.
+Convert the birth column of the NYC dogs dataset to Date class (use “01” for the day since it’s not provided). Create a frequency histogram of birthdates with a one-month binwidth. (Hint: don’t forget about base R.) What do you observe? Provide a reasonable hypothesis for the prominent pattern in the graph.
+
+```{r datea, echo=TRUE}
+
+t1 <- as.Date(paste0("01-",substring(dogs$birth,1)), format = '%d-%h-%y')
+t2 <- as.Date(paste0("01-",substring(dogs$birth,1)), format = '%d-%y-%b')
+
+t1[is.na(t1)] <- t2[!is.na(t2)]
+
+dogs$birth <- t1
+
+hist(dogs$birth, "month", freq = TRUE, ylim = c(0,4000), xlab = "Birth Month", ylab = "Frequency")
+
+```
+
+There are a few issues with the data that can be spotted on this histogram: There are several dates far in the past to be trustworthy, and far into the future (the database is dated June, 2012 according to the instructions). Also, basing the binning per month seems to create some creases in the data (maybe January, each year), and 2 distributions seem to be overlaid on the same graph. This clearly needs fixing.
+
+## b.
+Redraw the frequency histogram with impossible values removed and a more reasonable binwidth.
+
+```{r dateb, echo=TRUE, fig.height = 4}
+
+clean_dogs <- dogs[dogs$birth <= "2012-06-01" & dogs$birth >= "1992-06-01",]
+
+hist(clean_dogs$birth, "year", freq = TRUE, xlab = "Birth Year", ylab = "Frequency")
+
+```
+
+Now the information is clearer for our analysis: every year, more dogs were logged into the database (until the end of 2012, anyways). The amounts increase monotonically, which is consistent with a population. 2012 seems to have a much lower frequency, which might be due to the fact that the year is not complete.
+
+
+## 3. Mosaic Plots
+
+##   a.
+Create a mosaic plot to see if dominant_color depends on Group. Use only the top 5 dominant colors; group the rest into an “OTHER” category. The last split should be the dependent variable and it should be horizontal. Sort each variable by frequency, with the exception of “OTHER”, which should be the last category for dominant color. The labeling should be clear enough to identify what’s what; it doesn’t have to be perfect. Do the variables appear to be associated? Briefly describe.
+
+```{r mosa, echo=TRUE}
+
+dog_mos <- dogs
+
+dog_mos <- dog_mos %>% group_by(dominant_color) %>% mutate(number_color = n()) %>% ungroup()
+
+dog_mos$dominant_color <- factor(dog_mos$dominant_color)
+
+levels(dog_mos$dominant_color) <- c("Other", "Black", "Blond", "Other", "Other", "Other", "Brown", "Other", "Other", "Other", "Other", "Other", "Other", "Other", "Other", "Other", "Other", "Tan", "White")
+
+dog_mos$factorAfter <- sortLvlsByVar.fnc(dog_mos$dominant_color, dog_mos$number_color)
+
+ggplot(dog_mos) + geom_mosaic(aes(x = product(factorAfter, Group), fill = factorAfter), na.rm = TRUE) + theme(legend.position="bottom") + labs(title = "Mosaic plot for dominant color", y = "Color", x = "Group")
+
+```
+
+##    b.
+Redraw with the “OTHER” category filtered out. Do the results change? How should one decide whether it’s necessary or not to include an “OTHER” category?
+
+```{r mosb, echo=TRUE}
+dog_mosb <- dog_mos[dog_mos$dominant_color != "Other",]
+levels(dog_mosb$factorAfter) <- c("White","Blond", "Tan", "Brown", "White", "Black")
+ggplot(dog_mosb) + geom_mosaic(aes(x = product(factorAfter, Group), fill = factorAfter), na.rm = TRUE) + theme(legend.position="bottom") + labs(title = "Mosaic plot without (Other) label", y = "Color", x = "Group")
+```
+
+The distribution becomes more evident, but the results don't change when eliminating the "Other" category. I don't believe it should be removed, as it is evidence that there are several different colors in the data, and those should be considered for further analysis. 
+
+## 4. Maps
+
+Draw a spatial heat map of the percent spayed or neutered dogs by zip code. What patterns do you notice?
+
+```{r mapa, echo=TRUE, fig.height = 4}
+
+dogmap <- dogs %>% select(zip_code, spayed_or_neutered) %>% mutate(region = as.character(zip_code), pct = as.numeric(spayed_or_neutered)-1) %>% group_by(region) %>% summarise(value = round(100*sum(pct)/n(),2))
+
+dogmap <- dogmap[!duplicated(dogmap$region),]
+
+zoom <- c(36005, 36047, 36061, 36081,36085)
+
+zip_choropleth(dogmap, county_zoom = c(zoom), title = "Spayed or Neutered Dogs by Zipcode", legend = "Percentage")
+
+```
+
+The first pattern I can spot is that there are several NAs, mostly near the east of the city, but also in the east side of Manhattan. The heatmap also shows that there are areas with very few spayed or neutered dogs, like the Bronx and parts of Brooklyn and Queens. The Central Park doesn't have any information, which might be weird, depending on how the information wa recorded.Staten Island seems to be the only borough with complete information, and over 74% of spayed or neutered dogs, at least. The most densely populated areas (Manhattan, and the zones near the east river) seem to have a high percentage of spayed dogs.
+
+## 5. Time Series
+
+##   a.
+Use the tidyquant package to collect information on four tech stocks of your choosing. Create a multiple line chart of the closing prices of the four stocks on the same graph, showing each stock in a different color.
+```{r tima, echo=TRUE, cache = TRUE}
+
+AAPL <- tq_get("AAPL", get = "stock.prices", from = "2018-03-01", to = "2018-05-03")
+MSFT <- tq_get("MSFT", get = "stock.prices", from = "2018-03-01", to = "2018-05-03")
+TSLA <- tq_get("TSLA", get = "stock.prices", from = "2018-03-01", to = "2018-05-03")
+FDS <- tq_get("FDS", get = "stock.prices", from = "2018-03-01", to = "2018-05-03")
+
+prices <- inner_join(AAPL, TSLA, by = "date")
+prices <- inner_join(prices, MSFT, by = "date")
+prices <- inner_join(prices, FDS, by = "date")
+
+end <- as_date("2018-05-03")
+start <- end - weeks(8)
+
+price_plot <- select(prices, Date = date, AAPL = close.x, TSLA = close.y, MSFT = close.x.x, FDS = close.y.y)
+
+p_plot <- gather(price_plot, key, value, -Date)
+
+ggplot(p_plot, aes(Date, value, col = key)) + geom_line() +
+    labs(title = "Stock Line Chart", y = "Closing Price (in U$)", x = "Date") + 
+    theme_tq() + theme(legend.position="right")
+
+```
+
+This line chart contains the closing prices for Apple (AAPL), Microsoft (MSFT), Tesla (TSLA) and Factset (FDS), between March and May, 2018. Although their prices differ, thus far it is possible to see that Tesla has more variability in its closing price throughout the perior. Seeing which stock outperformed the rest in this period is somewhat complicated.
+
+##    b.
+Transform the data so each stock begins at 100 and replot. Choose a starting date for which you have data on all of the stocks. Do you learn anything new that wasn’t visible in (a)?
+
+```{r timb, echo=TRUE}
+
+p_plot2 <- p_plot %>% group_by(key) %>%  mutate(sca = 100*value/value[1]) %>% ungroup()
+
+ggplot(p_plot2, aes(Date, sca, col = key)) + geom_line() +
+    labs(title = "Stock Line Chart, base 100", y = "Closing Price (scaled to 03/01/2018)", x = "Date") + 
+    theme_tq() + theme(legend.position="right")
+
+```
+
+In the scaled version of the graph, it is clear that both FactSet and Tesla have lost value during the chosen period. Both Apple and Microsoft have fluctuated around 7% of their original value, but the closing price in the last day was slightly above their original price. Tesla's stock lost nearly 15% during the first month and then bounced back (come on, Elon!).
+
+## 6. Presentation
+
+Imagine that you have been asked to create a graph from the Dogs of NYC dataset that will be presented to a very important person (or people). The stakes are high.
+
+## a.
+Who is the audience? 
+
+My audience shall be the people of New York City.
+
+## b.
+What is the main point you hope someone will take away from the graph?
+
+I want to make the residents of Manhattan aware of the current situation of spayed and neutered dogs in the city (if this was taking place back in 2012).
+
+## c.
+Present the graph, cleaned up to the standards of “presentation style.” Pay attention to choice of graph type, if and how the data will be summarized, if and how the data will be subsetted, title, axis labels, axis breaks, axis tick mark labels, color, gridlines, and any other relevant features.
+
+```{r presa, echo=TRUE, fig.height = 4}
+
+dogmapb <- dogs %>% select(zip_code, spayed_or_neutered) %>% 
+  mutate(region = as.character(zip_code), pct = as.numeric(spayed_or_neutered)-1) %>% 
+  group_by(region) %>% summarise(value = round(100*sum(pct)/n(),2)) %>% 
+  filter(!is.na(value))
+
+dogmapb <- dogmapb[!duplicated(dogmapb$region),]
+
+zoom <- c(36061)
+
+zip_choropleth(dogmapb, county_zoom = c(zoom), title = "Manhattan, we're waiting for you! Please register your dogs", legend = "Percentage Spayed")
+
+```
+There are several areas within Manhattan where we lack information about the status of your pets. Please register them, and let us know if your dog has been spayed. This way, we will be able to take better measures regarding pets in the city.
