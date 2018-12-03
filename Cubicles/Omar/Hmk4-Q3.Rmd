@@ -1,0 +1,108 @@
+---
+title: "Homework #4"
+author: "Omar Pardo Gomez (cop2108)"
+date: "November 13th, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 6
+)
+```
+
+``` {r echo=FALSE}
+library(gsheet)
+library(dplyr)
+library(ggplot2)
+
+theoffice_url <- 'docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0'
+theoffice_df <- gsheet2tbl(theoffice_url)
+```
+
+## Question 3
+
+Begin the analysis of one variable in the dataset you are using the final project.  As this is an individual homework assignment, each group member should choose a different variable. Choose three visualizations as appropriate to show the distribution of the variable, conditioned on another variable if desired (for example, the distribution of income by region).  Write a few sentences describing what you found and what new questions your visualizations have generated. (Faceted graphs count as one graph; graphs put together with grid.arrange() or similar count as multiple graphs.)
+
+### Dataset
+
+Our dataset contains all the dialogues of the NBC's sitcom *The Office*, which we are reading directly from this public [Google Sheet](https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0). It is constituted by every line of the series and contains seven different variables:
+
+1. **id**: integer, identification of every line
+1. **season**: an integer from 1 to 9, represents one of the nine seasons of the series
+1. **episode**: integer, contains the episode number of the correspondent season
+1. **scene**: integer, represents the scene number of the correspondent episode
+1. **line_text**: string, the line said by one of the characters
+1. **speaker**: string, the name of the character who said the line
+1. **deleted**: boolean, express if the line was removed or not from the aired episode
+
+Particularly for this homework, I am going to focus on the **scene** variable.
+
+### Visualization 1
+
+\textcolor{blue}{For this visualization, I will analyze the number of scenes per episode of the series, using a boxplot. I am going to differentiate by season to see if there is some unusual behavior.}
+
+``` {r fig.height = 3}
+# Scenes per episode
+num_scenes_df <- theoffice_df %>% 
+  group_by(season, episode) %>% 
+  summarise(num_scenes = max(scene))
+
+ggplot(data = num_scenes_df, aes(x = factor(season), y = num_scenes)) +
+  geom_boxplot() +
+  xlab("season") +
+  ylab("scenes per episode")
+```
+
+\textcolor{blue}{It looks like there was a significant decrease in the number of scenes per episode from \textit{season 4} to \textit{season 5}, even when \textit{season 5} contains the one with the maximum number of scenes from the whole series. It would be interesting to investigate the length of each episode so that we can know if they became shorter or the scenes longer.}
+
+&nbsp; <!-- blank line --> 
+
+### Visualization 2
+
+\textcolor{blue}{Continuing a similar line, we will count the number of scenes per episode again, but this time with a different graph for each of the four main characters: \textit{Michael}, \textit{Dwight}, \textit{Jim} and \textit{Pam}. The intention is to know if any of them gained or lost appearances as the series moved on.}
+
+``` {r fig.height = 5}
+# Scenes per episode per character
+main_characters = c("Michael", "Jim", "Dwight", "Pam")
+characters_scenes_df <- theoffice_df %>% 
+  filter(speaker %in% main_characters) %>% 
+  mutate(speaker = factor(speaker, levels = main_characters)) %>% 
+  group_by(season, episode, speaker) %>% 
+  summarise(num_scenes = length(table(scene)))
+
+ggplot(data = characters_scenes_df, aes(x = factor(season), y = num_scenes)) +
+  geom_boxplot() +
+  xlab("season") +
+  ylab("scenes per episode") +
+  facet_wrap(~speaker)
+```
+
+\textcolor{blue}{The most evident unusual behavior is the one from Michael, as he left the series after \textit{season 7} and returned for one scene on the final episode. Moreover, even when the number scenes declined for all the characters after \textit{season 5}, it seems like the most significant difference belongs to Michael, as well. This could mean that his importance for the series was already diminishing before he left. Also, Dwight's appearances increased for the last two seasons, Jim's for the eight one, and Pam's for the nine one, maybe substituting Michael's ones. It would be interesting to research if any of the other characters gained relevance as well on that period.}
+
+&nbsp; <!-- blank line --> 
+
+### Visualization 3
+
+\textcolor{blue}{Finally, I would like to investigate how long were the \textit{The Office}'s scenes. Again, was there a different behavior by season? To do that, I will count the number of lines per scene.}
+
+``` {r fig.height = 5}
+# Lines per scene per episode
+lines_per_scene_df <- theoffice_df %>% 
+  group_by(season, episode, scene) %>% 
+  summarise(lines = n())
+
+ggplot(data = lines_per_scene_df, aes(x = lines)) +
+  geom_histogram(bins = 20, aes(y=..density..)) +
+  facet_wrap(~factor(season)) +
+  xlab("lines per scene") 
+```
+
+\textcolor{blue}{It's easy to see there is a decreasing behavior for all the seasons, meaning that most of the scenes contained just a few lines. This situation could be counterintuitive for most of the series, as one would expect constant dialogue between the characters, and therefore scenes with more than one or two lines. However, taking into account \textit{The Office}'s documentary style, it makes sense, because many times there is just one character talking to the camera. For further investigation, it would be interesting to know how long in time are these one-line scenes, and if they can be compared to a typical scene of a different kind series.}
+
+&nbsp; <!-- blank line --> 
