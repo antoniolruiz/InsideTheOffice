@@ -1,14 +1,7 @@
-
-#library(readr)
-
-#theoffice_df <- read_csv('the-office-lines - scripts.csv')
-
-
 library(gsheet)
 
 theoffice_url <- 'docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0'
 theoffice_df <- gsheet2tbl(theoffice_url)
-
 
 library(dplyr)
 library(tokenizers)
@@ -172,10 +165,10 @@ ct_list = list(
   "im going",
   "lets go",
   "nope nope nope nope nope"
-  
 )
 
-sw_list <- stopwords("en") %>% remove_apostrophes()
+sw_list <- stopwords(language = "en", source ='smart') %>% remove_apostrophes()
+stop_words$word
 
 wrylies_dialogue_df <- theoffice_df %>% 
   mutate(
@@ -195,5 +188,12 @@ dialogues_3grams <- count_ngrams(dialogues_df, "filt_dialogue", 3)
 dialogues_4grams <- count_ngrams(dialogues_df, "filt_dialogue", 4)
 dialogues_5grams <- count_ngrams(dialogues_df, "filt_dialogue", 5)
 
-dialogues_df2 <- dialogues_df %>% 
-  mutate(words = tokenize_words(filt_dialogue))
+words_df <- dialogues_df %>% 
+  separate_rows(., filt_dialogue, sep = " ", convert = TRUE) %>% 
+  rename(word = filt_dialogue) %>% 
+  filter(word != "")
+
+words_count <- table(words_df$word) %>% 
+  as.data.frame() %>% 
+  arrange(-Freq)
+
