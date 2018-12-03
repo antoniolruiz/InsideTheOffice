@@ -1,7 +1,14 @@
 
-library(readr)
+#library(readr)
 
-theoffice_df <- read_csv('the-office-lines - scripts.csv')
+#theoffice_df <- read_csv('the-office-lines - scripts.csv')
+
+
+library(gsheet)
+
+theoffice_url <- 'docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0'
+theoffice_df <- gsheet2tbl(theoffice_url)
+
 
 library(dplyr)
 library(tokenizers)
@@ -83,7 +90,7 @@ count_ngrams <- function(df, var, n) {
 
 #### SCRIPT ####
 
-ct_list = list(ct_list = list(
+ct_list = list(
   "dunder mifflin",
   "thats what she said",
   "bob vance vance refrigeration",
@@ -166,8 +173,6 @@ ct_list = list(ct_list = list(
   "lets go",
   "nope nope nope nope nope"
   
-)
-
 )
 
 sw_list <- stopwords("en") %>% remove_apostrophes()
