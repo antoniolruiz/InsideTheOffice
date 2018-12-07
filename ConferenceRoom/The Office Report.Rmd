@@ -11,9 +11,42 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
+Switch to 2 question: List team members and a description of how each contributed to the project.
+
 Explain why you chose this topic, and the questions you are interested in studying.
 
-List team members and a description of how each contributed to the project.
+We (just like over 6 million viewers per episode) have all enjoyed watching this show, and decided to use our data visualization techniques to analyze some complex questions about the series. The following is the initial list that guided our analysis:
+
+1) How many "that's what she said"" gags took place throughout the series?
+
+2) Who are the characters that are mentioned the most in others' dialogues?
+
+3) Who is the character that says the longest words?
+
+4) Who has the most dialogues?
+
+5) Who uses the most crutch words?
+
+6) Who got cut out? Who lost the most scenes due to the editors?
+
+7) What are the groups of characters that share the most screen time?
+
+8) Who stares at the camera the most?
+
+9) Do female characters have as much dialogues as males?
+
+10) As the show progressed, how did ratings change?
+
+11) What characters speak the most throughout the series?
+
+13) Is Michael really smarter than Oscar?
+
+14) Can we visualize how characters interact amongst themselves?
+
+15) Can we identify the most important word for a given character or episode?
+
+Using these questions as a starting point, we dived into our database and expanded it by using information that wasn't already in it. 
+
 
 ## Questions from HW4
 
