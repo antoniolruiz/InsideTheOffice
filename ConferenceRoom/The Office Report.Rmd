@@ -67,10 +67,23 @@ From the last plot, I think it's necessary to add new variations of the joke, as
 There's still much more to learn about this dataset, and I am looking forward to working with my teammates to see what other questions come up for the final project.
 
 ## Antonio
-
+### End of questions
 # Description of Data
 
-Describe how the data was collected, how you accessed it, and any other noteworthy features.
+Thanks to the show's large number of fans there are several websites dedicated to different aspects of the series. We found a repository from a fan's blog, called Officequotes.net; this repository includes every dialogue from the script, specifying the season, episode and scene in which it was said, as well as its speaker and whether the scene was edited out of the show or not.
+
+The data is stored as a Google Sheet in (https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed into it to understand the conditions it was in:
+
+First, we found that the 
+
+Furthermore, one of the questions required us to retrieve data that wasn't available on the original dataset. We found ratings at a per-episode level in wikipedia.org (which took this information from tv.com) and copied the information on a csv file. Although the ratings correspond to the original airdate's audience, we assume that this factor is a constant (i.e, it is a fair comparisson to evaluate conclusions about viewership for any episode in the seried based on the rating recieved during its first cast), and used it for our project.
+
+
+## Describe how the data was collected, how you accessed it, and any other noteworthy features.
+
+
+
+
 
 # Analysis of data quality
 
@@ -95,7 +108,6 @@ Select one (or more) of your key findings to present in an interactive format. B
 Discuss limitations and future directions, lessons learned.
 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
