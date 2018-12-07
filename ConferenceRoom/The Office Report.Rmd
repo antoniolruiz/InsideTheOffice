@@ -7,6 +7,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(extracat)
+library(gsheet)
+library(tidyverse)
+theoffice_url <- 'https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974534'
+theoffice_df <- gsheet2tbl(theoffice_url)
 ```
 
 # Introduction
@@ -18,30 +24,45 @@ Explain why you chose this topic, and the questions you are interested in studyi
 We (just like over 6 million viewers per episode) have all enjoyed watching this show, and decided to use our data visualization techniques to analyze some complex questions about the series. The following is the initial list that guided our analysis:
 
 1) How many "that's what she said"" gags took place throughout the series?
+Ya
 
 2) Who are the characters that are mentioned the most in others' dialogues?
+Ya
 
 3) Who is the character that says the longest words?
+Chepe
 
 4) Who has the most dialogues?
+Ya
 
 5) Who uses the most crutch words?
+Antonio
 
 6) Who got cut out? Who lost the most scenes due to the editors?
+Antonio
 
 7) What are the groups of characters that share the most screen time?
+Ya
 
 8) Who stares at the camera the most?
+Antonio
 
 9) Do female characters have as much dialogues as males?
+Chepe
 
 10) As the show progressed, how did ratings change?
+Antonio
 
 11) What characters speak the most throughout the series?
+Ya Checar si se repite
+
+12) Longest words?
+Asignar
 
 13) Is Michael really smarter than Oscar?
 
 14) Can we visualize how characters interact amongst themselves?
+Antonio?
 
 15) Can we identify the most important word for a given character or episode?
 
@@ -74,7 +95,26 @@ Thanks to the show's large number of fans there are several websites dedicated t
 
 The data is stored as a Google Sheet in (https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed into it to understand the conditions it was in:
 
-First, we found that the 
+First, inspected for any N/As in the dataser, using the visna function. 
+
+```{r missing, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+We found that there were none of these values in the entire data (nice!), but this doesn't mean that the data was usable straight away. We glimpsed into it to better understand what was going on with the different columns.
+
+```{r glimpse}
+glimpse(theoffice_df)
+```
+
+The 
+
+```{r fct_character}
+theoffice_df$speaker <- as.factor(theoffice_df$speaker)
+levels(theoffice_df$speaker)
+```
+
+
 
 Furthermore, one of the questions required us to retrieve data that wasn't available on the original dataset. We found ratings at a per-episode level in wikipedia.org (which took this information from tv.com) and copied the information on a csv file. Although the ratings correspond to the original airdate's audience, we assume that this factor is a constant (i.e, it is a fair comparisson to evaluate conclusions about viewership for any episode in the seried based on the rating recieved during its first cast), and used it for our project.
 
