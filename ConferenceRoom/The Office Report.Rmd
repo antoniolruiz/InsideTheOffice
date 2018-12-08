@@ -17,11 +17,25 @@ theoffice_df <- gsheet2tbl(theoffice_url)
 
 # Introduction
 
-Switch to 2 question: List team members and a description of how each contributed to the project.
+## Instructions: List team members and a description of how each contributed to the project.
 
-Explain why you chose this topic, and the questions you are interested in studying.
+
+
+## Instructions: Explain why you chose this topic, and the questions you are interested in studying.
 
 We (just like over 6 million viewers per episode) have all enjoyed watching this show, and decided to use our data visualization techniques to analyze some complex questions about the series. The following is the initial list that guided our analysis:
+
+Can we get a better understanding on each character's specific profile, like who says the most jokes, or who holds the most airtime?
+
+Digging deeper, can this dataset help us understand something about the interaction among the characters, like who mentions Dwight the most times, or how many scenes are shared by groups like Michael and Dwight, or Jim and Pam?
+
+Finally, would the scripts help us understand any impact the show might have had on society? For instance, do males play a bigger role on the show? How did viewership change as time passed and how did it react to changer in the original cast?
+
+
+To tackle this project, 
+
+
+## These specific questions will be moved to the analysis portion after we answer them
 
 1) How many "that's what she said"" gags took place throughout the series?
 Ya
@@ -93,51 +107,143 @@ There's still much more to learn about this dataset, and I am looking forward to
 
 Thanks to the show's large number of fans there are several websites dedicated to different aspects of the series. We found a repository from a fan's blog, called Officequotes.net; this repository includes every dialogue from the script, specifying the season, episode and scene in which it was said, as well as its speaker and whether the scene was edited out of the show or not.
 
-The data is stored as a Google Sheet in (https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed into it to understand the conditions it was in:
+The data is stored as a Google Sheet in (https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed into it to understand the conditions it was in. In general, the dataset was properly structured which eased the cleaning process. The tasks we followed are described in detail on the next session of the report.
 
-First, inspected for any N/As in the dataser, using the visna function. 
 
-```{r missing, echo=TRUE}
-visna(theoffice_df, sort = "b")
-```
+Furthermore, one of the questions required us to retrieve data that wasn't available on the original dataset. We found ratings at a per-episode level in wikipedia.org (which took this information from tv.com) and copied the information on a csv file. Although the ratings correspond to the original airdate's audience, we assume that this factor is a constant (i.e, it is a fair comparisson to evaluate conclusions about viewership for any episode in the seried based on the rating recieved during its first cast), and used it for our project.
 
-We found that there were none of these values in the entire data (nice!), but this doesn't mean that the data was usable straight away. We glimpsed into it to better understand what was going on with the different columns.
+
+## Description for above section: Describe how the data was collected, how you accessed it, and any other noteworthy features.
+
+# Analysis of data quality
+
+### Requirement: Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
+
+In order to assess the data quality, we set up a few tasks to inspect different questions about the transcripts: Were conversations missing? Was a certain standard on names followed? Could we really find answers to the questions we were hoping for with the information that was gathered?
+
+First, we inspected the general structure of the original dataframe. The scripts included 7 variables as previously discussed, and we understood it was necessary to use the numbers as categorical data rather than integers (since they represent episodes, scenes, seasons, etc.) and the speaker names as factors, rather than character strings. 
 
 ```{r glimpse}
 glimpse(theoffice_df)
 ```
 
-The 
+Furthermore, a character might have been referenced in different ways throughout the show, like "Todd Packer" for "Todd", or "Robert California" for "Robert". Also, standardizing names in lower case would facilitate the process later, so we also included that adjustment.
 
 ```{r fct_character}
 theoffice_df$speaker <- as.factor(theoffice_df$speaker)
 levels(theoffice_df$speaker)
 ```
 
+## Not sure about this part. I had done it before, but I think it's not on the current code
 
+Later, we inspected for any N/As in the dataset, using the visna function. We found that there were none of these values in the entire data (nice!), but this did not mean that the data was usable straight away. 
 
-Furthermore, one of the questions required us to retrieve data that wasn't available on the original dataset. We found ratings at a per-episode level in wikipedia.org (which took this information from tv.com) and copied the information on a csv file. Although the ratings correspond to the original airdate's audience, we assume that this factor is a constant (i.e, it is a fair comparisson to evaluate conclusions about viewership for any episode in the seried based on the rating recieved during its first cast), and used it for our project.
+```{r missing, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
 
+After these steps, we know that in our analyses we must limit the number of characters used, as our intent is to focus on the main cast, rather than on any guest or extra that might have said a line in the entire series.
 
-## Describe how the data was collected, how you accessed it, and any other noteworthy features.
+This was great progress to start our analysis, as we could now focus on the text of the actual dialogues, the main point of this project. We followed the process by removing the wrylies, which allowed us to focus on dialogues rather than instructions. We also dropped punctuation and removed capitalization from the document. Finally, we tied common expressions throughout the series, joining each word by an underscore, in order to avoid dropping the stopwords on these expressions later in the project.
 
+## Note: We need to decide what happens with the stop words. I'm leaving this comment as a placeholder.
 
-
-
-
-# Analysis of data quality
-
-Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
+## Note: Description about ngrams
 
 # Main Analysis
 
-Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
+## Requirement: Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
+
+Now that the data had been cleaned, we can move on to figuring out what relevant information can be obtained about the characters, their interactions, and get a better understanding of the series. 
+
+## What can we learn about individual characters?
+
+
+
+## What can we know about groups of characters and about their interactions?
+
+
+
+## The Office in real life: portrayal of Corporate America and viewership trends through time
+
+
+
+## We need to add the plots and conclusions
+
+1) How many "that's what she said" gags took place throughout the series?
+
+
+```{r TWSS, echo=TRUE}
+thats_what_she_said <- words_df %>% 
+  filter(word == "thats_what_she_said") %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq)
+
+```
+
+
+2) Who are the characters that are mentioned the most in others' dialogues?
+```{r interactions, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+3) Who is the character that says the longest words?
+```{r longest, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+4) Who has the most dialogues?
+```{r most_dialogues, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+5) Who uses the most crutch words?
+Antonio
+
+6) Who got cut out? Who lost the most scenes due to the editors?
+Antonio
+
+7) What are the groups of characters that share the most screen time?
+```{r missing, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+8) Who stares at the camera the most?
+Antonio
+
+9) Do female characters have as much dialogues as males?
+```{r missing, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+10) As the show progressed, how did ratings change?
+Antonio
+
+11) What characters speak the most throughout the series?
+Ya Checar si se repite
+
+12) Longest words?
+Asignar
+
+
+## Questions that might have a shorter answer or depend on the other questions we solved
+
+13) Is Michael really smarter than Oscar?
+
+14) Can we visualize how characters interact amongst themselves?
+Antonio?
+
+15) Can we identify the most important word for a given character or episode?
+
 
 # Executive Summary
 
-Provide a short nontechnical summary of the most revealing findings of your analysis written for a nontechnical audience. The length should be approximately two pages (if we were using pages…) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
+## Req. Provide a short nontechnical summary of the most revealing findings of your analysis written for a nontechnical audience. The length should be approximately two pages (if we were using pages…) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
 
-Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. You do not have to present your work to the class! However, you may choose to present your work as your community contribution, in which case you need to email me to set a date before the community contribution due date. (The presentation itself may be later.)
+## Req. cont. Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. You do not have to present your work to the class! However, you may choose to present your work as your community contribution, in which case you need to email me to set a date before the community contribution due date. (The presentation itself may be later.)
+
+
 
 # Interactive component
 
