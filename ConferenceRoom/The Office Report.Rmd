@@ -32,7 +32,7 @@ Digging deeper, can this dataset help us understand something about the interact
 Finally, would the scripts help us understand any impact the show might have had on society? For instance, do males play a bigger role on the show? How did viewership change as time passed and how did it react to changer in the original cast?
 
 
-To tackle this project, 
+To tackle this project, we 
 
 
 ## These specific questions will be moved to the analysis portion after we answer them
@@ -154,21 +154,50 @@ This was great progress to start our analysis, as we could now focus on the text
 
 ## Requirement: Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
 
+### Remember to add charts and conclusions. Use a color deficiency compliant theme
+
 Now that the data had been cleaned, we can move on to figuring out what relevant information can be obtained about the characters, their interactions, and get a better understanding of the series. 
 
 ## What can we learn about individual characters?
 
+4) Who has the most dialogues?
+```{r most_dialogues, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
 
+3) Who is the character that says the longest words?
+```{r longest, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
+
+12) Who is the character that says the longest lines?
+
+11) What characters speak the most throughout the series?
+
+## Note: We discussed about making it interactive, as the % is split on the previous (3) questions
+
+5) Who uses the most crutch words?
+Antonio
+
+6) Who got cut out? Who lost the most scenes due to the editors?
+Antonio
+
+8) Who stares at the camera the most?
+Antonio
 
 ## What can we know about groups of characters and about their interactions?
 
+2) Who are the characters that are mentioned the most in others' dialogues?
+```{r interactions, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
 
+7) What are the groups of characters that share the most screen time?
+```{r chars_scene, echo=TRUE}
+visna(theoffice_df, sort = "b")
+```
 
 ## The Office in real life: portrayal of Corporate America and viewership trends through time
-
-
-
-## We need to add the plots and conclusions
 
 1) How many "that's what she said" gags took place throughout the series?
 
@@ -182,49 +211,13 @@ thats_what_she_said <- words_df %>%
 
 ```
 
-
-2) Who are the characters that are mentioned the most in others' dialogues?
-```{r interactions, echo=TRUE}
-visna(theoffice_df, sort = "b")
-```
-
-3) Who is the character that says the longest words?
-```{r longest, echo=TRUE}
-visna(theoffice_df, sort = "b")
-```
-
-4) Who has the most dialogues?
-```{r most_dialogues, echo=TRUE}
-visna(theoffice_df, sort = "b")
-```
-
-5) Who uses the most crutch words?
-Antonio
-
-6) Who got cut out? Who lost the most scenes due to the editors?
-Antonio
-
-7) What are the groups of characters that share the most screen time?
-```{r missing, echo=TRUE}
-visna(theoffice_df, sort = "b")
-```
-
-8) Who stares at the camera the most?
-Antonio
-
 9) Do female characters have as much dialogues as males?
-```{r missing, echo=TRUE}
+```{r female_male, echo=TRUE}
 visna(theoffice_df, sort = "b")
 ```
 
 10) As the show progressed, how did ratings change?
 Antonio
-
-11) What characters speak the most throughout the series?
-Ya Checar si se repite
-
-12) Longest words?
-Asignar
 
 
 ## Questions that might have a shorter answer or depend on the other questions we solved
@@ -247,26 +240,14 @@ Antonio?
 
 # Interactive component
 
-Select one (or more) of your key findings to present in an interactive format. Be selective in the choices that you present to the user; the idea is that in 5-10 minutes, users should have a good sense of the question(s) that you are interested in and the trends you’ve identified in the data. In other words, they should understand the value of the analysis, be it business value, scientific value, general knowledge, etc.
+## Instructions: Select one (or more) of your key findings to present in an interactive format. Be selective in the choices that you present to the user; the idea is that in 5-10 minutes, users should have a good sense of the question(s) that you are interested in and the trends you’ve identified in the data. In other words, they should understand the value of the analysis, be it business value, scientific value, general knowledge, etc.
+
+
 
 # Conclusion
 
-Discuss limitations and future directions, lessons learned.
+## Instructions: Discuss limitations and future directions, lessons learned.
 
 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
