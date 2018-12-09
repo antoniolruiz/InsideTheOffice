@@ -1,3 +1,4 @@
+
 library(gsheet)
 
 theoffice_url <- 'docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0'
@@ -145,16 +146,44 @@ words_df <- dialogues_df %>%
   rename(word = filt_dialogue) %>% 
   filter(word != "")
 
+
+
+# Antonio
+
+# 5) Who uses the most crutch words?
+
+crutches <- words_df
+crutches$crutch <- crutches$word %in% stopwords()
+crutches <- crutches %>% 
+  mutate(crutch = ifelse(crutch == TRUE,1,0))
+View(crutches)
+  
+# 6) Who got cut out? Who lost the most scenes due to the editors?
+  
+deleted_scenes <- theoffice_df %>% 
+  filter(deleted == TRUE) %>% 
+  select(speaker,season) %>% 
+  group_by(speaker,season) %>% 
+  summarize(freq = n())
+
+
+
+View(deleted_scenes)
+
+
+# 10) As the show progressed, how did ratings change?
+
 mydir <- "C:/Users/ganto/OneDrive/Documents/GitHub/InsideTheOffice/Cubicles/Antonio's Office"
+surfdir <- "C:/Users/Antonio/Documents/GitHub/InsideTheOffice/Cubicles/Antonio's Office"
+
 setwd(mydir)
 viewers <- read.csv('The_office_viewers.csv')
 
-5) Who uses the most crutch words?
-  Antonio
- 
-6) Who got cut out? Who lost the most scenes due to the editors?
-  Antonio
+ratings <- viewers %>%  
+  select(ï..Season,Episode.overall,Episode,U.S..viewers..millions.) 
 
-10) As the show progressed, how did ratings change?
-  Antonio
+colnames(ratings) <- c('Season','Episode_overall','Episode','Viewers')
+View(ratings)
+  
+  
 
