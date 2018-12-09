@@ -17,9 +17,13 @@ theoffice_df <- gsheet2tbl(theoffice_url)
 
 # Introduction
 
-## Instructions: List team members and a description of how each contributed to the project.
+## Instructions: List team members and a description of how each contributed to the project This goes last within the section.
 
+Antonio:
 
+Jose:
+
+Omar:
 
 ## Instructions: Explain why you chose this topic, and the questions you are interested in studying.
 
@@ -32,7 +36,7 @@ Digging deeper, can this dataset help us understand something about the interact
 Finally, would the scripts help us understand any impact the show might have had on society? For instance, do males play a bigger role on the show? How did viewership change as time passed and how did it react to changer in the original cast?
 
 
-To tackle this project, we 
+To tackle this project, we ...
 
 
 ## These specific questions will be moved to the analysis portion after we answer them
@@ -44,7 +48,7 @@ Ya
 Ya
 
 3) Who is the character that says the longest words?
-Chepe
+Ya
 
 4) Who has the most dialogues?
 Ya
@@ -62,16 +66,16 @@ Ya
 Antonio
 
 9) Do female characters have as much dialogues as males?
-Chepe
+Ya
 
 10) As the show progressed, how did ratings change?
 Antonio
 
 11) What characters speak the most throughout the series?
-Ya Checar si se repite
+Ya
 
 12) Longest words?
-Asignar
+Ya
 
 13) Is Michael really smarter than Oscar?
 
@@ -135,6 +139,7 @@ levels(theoffice_df$speaker)
 ```
 
 ## Not sure about this part. I had done it before, but I think it's not on the current code
+## Also, a lot of different combinations are missing, like micahel for michael 
 
 Later, we inspected for any N/As in the dataset, using the visna function. We found that there were none of these values in the entire data (nice!), but this did not mean that the data was usable straight away. 
 
@@ -144,17 +149,32 @@ visna(theoffice_df, sort = "b")
 
 After these steps, we know that in our analyses we must limit the number of characters used, as our intent is to focus on the main cast, rather than on any guest or extra that might have said a line in the entire series.
 
+```{r cast, echo=TRUE}
+##Filtering for top 20 characters only
+main_and_sec_chars <- dialogues_df %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq) %>% 
+  top_n(30) %>% 
+  .$speaker
+
+```
+
 This was great progress to start our analysis, as we could now focus on the text of the actual dialogues, the main point of this project. We followed the process by removing the wrylies, which allowed us to focus on dialogues rather than instructions. We also dropped punctuation and removed capitalization from the document. Finally, we tied common expressions throughout the series, joining each word by an underscore, in order to avoid dropping the stopwords on these expressions later in the project.
 
 ## Note: We need to decide what happens with the stop words. I'm leaving this comment as a placeholder.
 
+
+
 ## Note: Description about ngrams
+
+
 
 # Main Analysis
 
 ## Requirement: Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
 
-### Remember to add charts and conclusions. Use a color deficiency compliant theme
+### Remember to add charts and conclusions. Use a color deficiency compliant theme like "scale_fill_brewer(palette="Set1")"
 
 Now that the data had been cleaned, we can move on to figuring out what relevant information can be obtained about the characters, their interactions, and get a better understanding of the series. 
 
@@ -162,17 +182,83 @@ Now that the data had been cleaned, we can move on to figuring out what relevant
 
 4) Who has the most dialogues?
 ```{r most_dialogues, echo=TRUE}
-visna(theoffice_df, sort = "b")
+
+dialogues_by_char <- dialogues_df %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq)
+
+ggplot(dialogues_by_char, aes(x=fct_reorder(dialogues_by_char$speaker, Freq, .desc = TRUE)), stat = "count") + 
+  geom_bar() + 
+  coord_flip() + 
+  labs(title = "Who has the most dialogues?", x = "Character", y="Total number of lines") + 
+  scale_fill_brewer(palette="Set1")
+
 ```
 
 3) Who is the character that says the longest words?
 ```{r longest, echo=TRUE}
-visna(theoffice_df, sort = "b")
+### Changed words_df; leaving it here in the meanwhile
+words_df <- dialogues_df %>% 
+  separate_rows(., filt_dialogue, sep = " ", convert = TRUE) %>% 
+  rename(word = filt_dialogue) %>% 
+  filter(word != "") %>%
+  mutate(word_length = nchar(word))
+
+word_length_df <- words_df %>%
+  select (speaker, word_length) %>%
+  group_by(speaker) %>% 
+  summarize (avg_length = sum(word_length)/n(), max_word = max(word_length))
+
+ggplot(word_length_df, aes(x = reorder(speaker, max_word), y = max_word)) + 
+  geom_point() + 
+  coord_flip() + 
+  labs(title = "Who speaks the longest lines?", x = "Character", y="Average characters per line of speech") + 
+  lims(y=c(20,35)) + 
+  scale_fill_brewer(palette="Set1")
+
 ```
 
 12) Who is the character that says the longest lines?
 
+```{r longest_lines, echo=TRUE}
+### Changed dialogues_df; leaving it here in the meanwhile
+
+dialogues_df <- wrylies_dialogue_df %>% 
+  filter(!deleted) %>% 
+  select(id, season, episode, scene, speaker, dialogue) %>% 
+  mutate(filt_dialogue = clean_text(dialogue, ct_list), dialogue_length = nchar(filt_dialogue))
+
+dialogue_length_df <- dialogues_df %>%
+  select (speaker, dialogue_length) %>%
+  group_by(speaker) %>% 
+  summarize (avg_d_length = sum(dialogue_length)/n(), max_dialogue = max(dialogue_length))
+
+ggplot(dialogue_length_df, aes(x = reorder(speaker, max_dialogue), y = max_dialogue)) + 
+  geom_point() + 
+  coord_flip() + 
+  labs(title = "Who speaks the longest lines?", x = "Character", y="Average characters per line of speech") + 
+  lims(y=c(20,35)) + 
+  scale_fill_brewer(palette="Set1")
+
+```
+
 11) What characters speak the most throughout the series?
+
+```{r most_words, echo=TRUE}
+words_by_char <- words_df %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq)
+
+ggplot(words_by_char, aes(x = reorder(speaker, -Freq), y = Freq)) + 
+  geom_point() + 
+  coord_flip() + 
+  labs(title = "Who speaks the most words?", x = "Character", y="Total number of words throughout the show") + 
+  lims(y=c(20,35)) + 
+  scale_fill_brewer(palette="Set1")
+
+```
 
 ## Note: We discussed about making it interactive, as the % is split on the previous (3) questions
 
@@ -189,12 +275,65 @@ Antonio
 
 2) Who are the characters that are mentioned the most in others' dialogues?
 ```{r interactions, echo=TRUE}
-visna(theoffice_df, sort = "b")
+## Too long, might be necessary to move elsewhere; just copied and pasted from Omar's
+replace_characters <- function(text) {
+  text <- gsub("michael_scott", "michael", text)
+  text <- gsub("dwight_schrute", "dwight", text)
+  text <- gsub("jim_halpert", "jim", text)
+  text <- gsub("andy_bernard", "andy", text)
+  text <- gsub("david_wallace", "david", text)
+  text <- gsub("robert_california", "robert", text)
+  text <- gsub("ryan_howard", "ryan", text)
+  text <- gsub("todd_packer", "todd", text)
+  text <- gsub("stanley_hudson", "dwight", text)
+  text <- gsub("bob_vance", "bob", text)
+  text <- gsub("mr_scott", "michael", text)
+  return(text)
+}
+
+main_and_sec_chars <- dialogues_df %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq) %>% 
+  top_n(30) %>% 
+  .$speaker
+
+interact_df <- words_df %>% 
+  mutate(word = replace_characters(word)) %>% 
+  filter(word %in% main_and_sec_chars)
+
+get_interactions_by_char <- function(char, interact_df) {
+  interact_char <- interact_df %>% 
+    filter(speaker == char)
+  interactions <- table(interact_char$word) %>% 
+    as.data.frame() %>% 
+    arrange(-Freq)
+  return(interactions)
+}
+
+get_interactions_by_char("kelly", interact_df)
+
 ```
 
 7) What are the groups of characters that share the most screen time?
+##By the way the table is constructed, we can see individual characters, as well as groups. Should we change this?
 ```{r chars_scene, echo=TRUE}
-visna(theoffice_df, sort = "b")
+##Shall we move the function elsewhere?
+get_chars_involved <- function(speaker) {
+  speaker %>% 
+    unique %>% 
+    sort %>% 
+    paste_words("_")
+}
+
+chars_per_scene <- words_df %>% 
+  group_by(season, episode, scene) %>% 
+  summarise(chars = get_chars_involved(speaker)) %>% 
+  ungroup %>% 
+  group_by(chars) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq) 
+
 ```
 
 ## The Office in real life: portrayal of Corporate America and viewership trends through time
@@ -209,11 +348,46 @@ thats_what_she_said <- words_df %>%
   summarise(Freq = n()) %>% 
   arrange(-Freq)
 
+ggplot(thats_what_she_said, aes(x=reorder(speaker, -Freq), y=Freq)) +
+  geom_col() + 
+  labs(title = "That", x = "Character", y="Total number of gags") + 
+  scale_fill_brewer(palette="Set1")
+
 ```
 
-9) Do female characters have as much dialogues as males?
+9) Do female characters have as much dialogues as male characters? 
+### Is this information relevant enough to include in previous charts?
 ```{r female_male, echo=TRUE}
-visna(theoffice_df, sort = "b")
+gen <- read.csv(file="../Cubicles/Jose/main_cast_gender.csv", header=TRUE, sep=",")
+
+ggplot(gen, aes(x=fct_infreq(gen$gender))) + 
+  geom_bar(aes(y=(..count..))) + 
+  labs(title = "Over 2/3 of the show's main cast are male", x = "Gender", y="Number of characters")
+
+## Merge for number of dialogues
+gen_dialogues <- merge(dialogues_by_char, gen, all.x = TRUE) %>%
+  filter(gender %in% c('male', 'female')) %>%
+  group_by(gender) %>% 
+  summarize(Freq = sum(Freq)/1000) %>% 
+  arrange(-Freq)
+
+ggplot(gen_dialogues, aes(x = reorder(gender, -Freq), y = Freq)) + 
+  geom_col() + 
+  labs(title = "Do females have more dialogues?", x = "Gender", y="Number of lines (in thousands)") + 
+  scale_fill_brewer(palette="Set1")
+  
+## Merge for number of words
+gen_words <- merge(words_by_char, gen, all.x = TRUE) %>%
+  filter(gender %in% c('male', 'female')) %>%
+  group_by(gender) %>% 
+  summarize(Freq = sum(Freq)/1000) %>% 
+  arrange(-Freq)
+
+ggplot(gen_words, aes(x = reorder(gender, -Freq), y = Freq)) + 
+  geom_col() + 
+  labs(title = "Is the amount of words proportional to the number of dialogues by gender?", x = "Gender", y="Number of words (in thousands)") + 
+  scale_fill_brewer(palette="Set1")
+
 ```
 
 10) As the show progressed, how did ratings change?
