@@ -10,6 +10,8 @@ library(stopwords)
 library(stringr)
 library(tidytext)
 library(tidyr)
+library(ggplot2)
+library(forcats)
 
 #### FUNCTIONS ####
 clean_names <- function(text) {
@@ -147,6 +149,8 @@ words_df <- dialogues_df %>%
   filter(word != "")
 
 
+MyPalette <- c('#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000')
+
 
 # Antonio
 
@@ -156,19 +160,53 @@ crutches <- words_df
 crutches$crutch <- crutches$word %in% stopwords()
 crutches <- crutches %>% 
   mutate(crutch = ifelse(crutch == TRUE,1,0))
-View(crutches)
+
+count_c <- crutches %>%
+  select(speaker,crutch) %>% 
+  group_by(speaker) %>% 
+  summarize(freq = n())
+
+#View(count_c)
+#colnames(count_c)
+
+aux_c <- count_c[order(-count_c$freq),] 
+top_c <- head(aux_c,15)
+top_c$freq <- top_c$freq/1000
+
+
+ggplot(data = top_c, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq, colour= speaker)) +
+  geom_bar(stat = 'identity') + 
+  scale_colour_manual(values = MyPalette) +
+  labs(title="Most crutches by character (in thousands)") +
+  labs(x="Character", y="Count") + 
+  ylim(c(0,160)) 
+
+#colnames(top_c)
+#View(top_c)
+
   
 # 6) Who got cut out? Who lost the most scenes due to the editors?
   
 deleted_scenes <- theoffice_df %>% 
   filter(deleted == TRUE) %>% 
   select(speaker,season) %>% 
-  group_by(speaker,season) %>% 
+  group_by(speaker) %>% #,season
   summarize(freq = n())
 
 
+aux_ds <- deleted_scenes[order(-deleted_scenes$freq),] 
+top_deleted <- head(aux_ds,15)
 
-View(deleted_scenes)
+#ratings$Season <- as.factor(ratings$Season)
+ggplot(data = top_deleted, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq,colour= speaker)) +
+  geom_bar(stat = 'identity') + 
+  scale_colour_manual(values = MyPalette) +
+  labs(title="Most scenes deleted by character") +
+  labs(x="Character", y="Count") + 
+  ylim(c(0,600)) 
+
+#colnames(top_deleted)
+#View(top_deleted)
 
 
 # 10) As the show progressed, how did ratings change?
@@ -180,10 +218,19 @@ setwd(mydir)
 viewers <- read.csv('The_office_viewers.csv')
 
 ratings <- viewers %>%  
-  select(ï..Season,Episode.overall,Episode,U.S..viewers..millions.) 
+  select(Ã¯..Season,Episode.overall,Episode,U.S..viewers..millions.) 
 
 colnames(ratings) <- c('Season','Episode_overall','Episode','Viewers')
-View(ratings)
-  
+
+ratings$Season <- as.factor(ratings$Season)
+ggplot(data = ratings, aes(x = Episode_overall, y = Viewers, fill = Season)) +
+  geom_bar(stat = 'identity',colour = "black") + 
+#  facet_grid(~Season) +
+  labs(title="US viewers per episode (in millions)") +
+  labs(x="Episode", y="Viewers") + 
+  xlim(c(0,205)) +
+  ylim(c(0,25)) 
+
+
   
 
