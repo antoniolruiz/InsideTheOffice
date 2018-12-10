@@ -211,13 +211,22 @@ ggplot(filtered_word, aes(x = value, y = fct_reorder2(speaker, attribute == 'max
 ## Note: We discussed about making it interactive, as the % is split on the previous (3) questions
 
 5) Who uses the most crutch words?
-Antonio
+```{r crutch_words, echo=TRUE}
+
+
+```
 
 6) Who got cut out? Who lost the most scenes due to the editors?
-Antonio
+```{r edited_out, echo=TRUE}
+
+
+```
 
 8) Who stares at the camera the most?
-Antonio
+```{r camera, echo=TRUE}
+
+
+```
 
 ## What can we know about groups of characters and about their interactions?
 
@@ -358,7 +367,10 @@ ggplot(gen_words, aes(x = reorder(gender, -Freq), y = Freq)) +
 ```
 
 10) As the show progressed, how did ratings change?
-Antonio
+```{r ratings, echo=TRUE}
+
+
+```
 
 
 ## Questions that might have a shorter answer or depend on the other questions we solved
