@@ -558,7 +558,7 @@ get_most_shared_scenes_plot <- function(shared_scenes_df) {
     data = shared_scenes_df,
     aes(x = reorder(speaker, -shared_scenes), y = shared_scenes, fill= speaker)
   ) +
-    geom_bar(stat = "identity") +
+    geom_bar(stat = "identity", color = 'black') +
     xlab("") +
     ylab("") +
     scale_colour_manual(values = MyPalette, aesthetics = "fill") 

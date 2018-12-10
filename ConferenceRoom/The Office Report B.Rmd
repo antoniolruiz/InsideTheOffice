@@ -192,6 +192,7 @@ This analysis gave us an idea: would it be possible to analyze what characters s
 
 get_most_shared_scenes(words_df,'jim',6)
 
+
 ```
 
 Michael and Dwight are by far the characters with the most screentime throughout the series, with several hundreds of scenes, each. Jim and Pam come in third and fourth place, respectively, and then we had our first combination: Jim and Pam shared over 250 scenes throughout the show. Dwight and Michael, and Michael and Jim combinations that have a high frequency throughout the show.
