@@ -1,0 +1,332 @@
+---
+title: "The Office Report"
+author: "Carlos Omar Pardo, Antonio Lopez Ruiz, Jose Lopez Torres"
+date: "December 3, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(R.utils)
+
+function_files <- sourceDirectory("functions")
+for (file in function_files){
+  source(file, local = TRUE)
+}
+
+get_libraries()
+theoffice_df <- get_data()
+
+vars <-  get_vars(theoffice_df)
+
+wrylies_dialogue_df <- vars[[1]]
+dialogues_df <- vars[[2]]
+words_df <-  vars[[3]]
+
+```
+
+# Introduction
+
+## Instructions: Explain why you chose this topic, and the questions you are interested in studying.
+
+This team (just like over 6 million viewers per episode) has enjoyed watching this show, and decided to use our data visualization techniques to ask some complex questions about the series. We were motivated to have a better understanding over the series in a quantitative manner, by creating a framework with three types of questions. We expect to be able to solve them mostly based on the data we obtained from the scripts and other web sources, rather than from our experience as audience.
+
+Can we get a better understanding on each character's specific profile, like who says the most jokes, or who holds the most airtime?
+
+Can this dataset help us understand something about the interaction among the characters, like who mentions whom the most times, or how many scenes are shared by groups like Michael and Dwight, or Jim and Pam?
+
+Finally, would the scripts help us understand any impact the show might have had on society? For instance, do males play a bigger role on the show? How did viewership change as time passed and how did it react to changes in the original cast?
+
+Using these questions as a starting point, we dived into our database and expanded it by using information that we deemed appropriate, but wasn't in it originally. 
+
+## Instructions: List team members and a description of how each contributed to the project This goes last within the section.
+
+As a team, each one of us contributed to every general task (cleaning, analysis, documentation, presentation and interactivity) in order to practice the skills we learnt in class. In broader terms, each one contributed more strongly in the area that suit them best: Omar focused in the data cleaning process, creating functions that would ease this process throughout the project as we found obstacles. Antonio worked in planning the interactive component, thinking what visualizations should be included and how to help the audience understand the information we would eventually give them. Jose worked in the general structure of the document, and assigning the analyses to their appropriate sections. We also made an effort to share our knowledge by solving each other's questions and agreeing on how to advance in the exploration of our dataset, in order to maximize our learning from the assignment.
+
+# Description of Data
+
+## Instructions: Describe how the data was collected, how you accessed it, and any other noteworthy features.
+Thanks to the show's large number of fans there are several websites dedicated to different aspects of the series. We found a repository from a fan's blog, called Officequotes.net. This repository includes every dialogue from the script, specifying the season, episode and scene in which it was said, as well as its speaker and whether the scene was edited out of the show or not.
+
+The data is stored as a Google Sheet [here](https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed it to understand the conditions it was in. In general, the dataset was properly structured -which eased the cleaning process. The tasks we followed are described in detail on the next session of the report.
+
+Furthermore, one of the questions required us to retrieve data that wasn't available on the original dataset. We found ratings at a per-episode level in wikipedia.org (which took this information from nielsen.com) and copied the information on a csv file. Although the ratings correspond to the original airdate's audience, we assume that this factor is a constant (i.e, it is a fair comparisson to evaluate conclusions about viewership for any episode in the seried based on the rating recieved during its first cast), and used it for our project. We also created a table with the main cast and the gender of each character in order to include this factor in our analysis. The genders were populated manually into the csv file.
+
+An important element in the analysis of the dialogues was the selection of a stopword dictionary, to drop (and analyze) common words in the language, so that we only retained meaningful information in our dataset. We used the `(stopwords)` default library for this matter.
+
+# Analysis of data quality
+
+## Instructions: Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
+
+Before we start reviewing the data, there's an important element of this document we would like to discuss: for the sake of keeping this Markdown clean, we made functions for every data manipulation and chart operation that would take more than a single line. This allowed us to show a cleaner document where the reader can focus on understanding the analysis structure, rather than reading hundreds of lines of code. The file that contains these functions lies in `../ConferenceRoom/functions/functions.R`, in case you want to take a closer look.
+
+In order to assess the data quality, we set up a few tasks to inspect different questions about the transcripts: Were conversations missing? Was a certain standard on names followed? Could we really find answers to the questions we were hoping for with the information that was gathered?
+
+First, we inspected the general structure of the original dataframe. The scripts included 7 variables as previously discussed, and we understood it was necessary to use the numbers as categorical data rather than integers (since they represent episodes, scenes, seasons, etc.) and the speaker names as factors, rather than character strings. This idea helped us realize that there were some typos in the names of the characters in the dataframe, which we started fixing.
+
+### Help: Also, a lot of different combinations are missing, like micahel for michael 
+
+```{r glimpse}
+glimpse(theoffice_df)
+```
+
+Furthermore, a character might have been referenced in different ways throughout the show, like "Todd Packer" for "Todd", or "Robert California" for "Robert". Also, standardizing names in lower case would facilitate the process later, so we also included that adjustment.
+
+Having a list of characters, and knowing who belong to the main cast, we created a palette for consistency. We assigned a specific color to each speaker, making sure that it was compliant with the guidelines for color perception deficiencies.
+
+```{r palette, include=TRUE}
+
+MyPalette <-  get_palette()
+
+```
+
+Later, we inspected for any N/As in the dataset, using the visna function. We found that there were none of these values in the entire data (nice!), but this did not mean that the data was usable straight away. 
+
+```{r missing, include = TRUE}
+knitr::opts_chunk$set(error = TRUE)
+#visna(theoffice_df, sort = "b")
+```
+
+### Help: remove # from the previous chunk without causing error
+
+This was great progress to start our analysis, as we could now focus on the text of the actual dialogues, the main point of this project. We followed the process by removing the wrylies, which allowed us to focus on dialogues rather than instructions. We also dropped punctuation and removed capitalization from the document. Finally, we tied common expressions throughout the series, joining each word by an underscore, in order to avoid dropping the stopwords on these expressions later in the project.
+
+### Help: Note: Description about ngrams
+
+The file with the whole set up of data clean-up functions and the process rests in `../Cubicles/Omar/clean_data.R` for your review.
+
+# Main Analysis
+
+## Instructions: Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
+
+Now that the data had been cleaned, we can move on to figuring out what relevant information can be obtained about the characters, their interactions, and get a better understanding of the series. We are following the framework we devised at the beginning of the project. 
+
+## What can we learn about individual characters?
+
+Upon organizing the dataset, we realized that one of the most obvious quesitons was if it was possible to determine what characters have the most lines in the show.
+
+```{r most_dialogues, echo=TRUE}
+
+most_lines_graph(dialogues_df)
+
+```
+
+It was obvious we could solve this question, but we faced an issue when we realized there are hundreds of characters with a single line. Since we only care about the main characters, we filtered the top 15 speakers of the entire series, and this was easier to plot.
+
+But does this mean these characters really speak the most? We want to eliminate the possibility that a speaker says several very short lines, which might make them get into the main cast without actually developing a character in the show.
+
+```{r most_words, echo=TRUE}
+
+most_words_graph(words_df)
+
+```
+
+This chart allows us to understand 2 things: there is a large gap after the top 5 characters in both number of lines and in words per character, and the general participation of the cast doesn't change. This might be due to the number of seasons and episodes, where everyone had a proportional chance to say a number of lines with a proportional number of words. We noticed it is difficult to understand this as 2 separate charts, so we will merge them into a single one in the executive summary.
+
+The next step to determine if the distribution of screen time is proportional indeed, we would like to find out if there is a relation between the average characters per line of speech for each character, and the maximum length of a line they delivered in the show. 
+
+```{r longest_lines, echo=TRUE}
+
+screen_distribution_graph(dialogues_df)
+
+```
+
+### Help: Change "characters" for "letters" in function
+
+From this chart, we can see that the lines of each character in the main cast are of the same length, approximately (although it would be interesting to take a closer look into this matter). We can also determine that the 5 main characters of the show are amongst the 9 characters with the longest line said, which makes sense due to how their characters evolved throughout the show. Particularly, Andy's longest line in the show is the one that ranks the lowest, with Robert, Jan, Erin and DeAngelo topping him for longest dialogue in the show.
+
+Now that we have our hands in this data, we realized that we can go one level deeper, and replicate at a word level what we just did for dialogues. This might shine some light over a character being portrayed as smarter in the show, as the ability to use more complicated words is linked to the perception of intelligence. 
+
+```{r longest, echo=TRUE}
+
+length_words_graph(words_df)
+
+```
+
+## Just realized this might be linked to that_what_she_said (19 characters). must drop underscores and re-do
+
+When we first ran this analysis, several characters shared the same number of letters in the longest word. This caught our attention, and we realized we needed to redo the analysis without counting the words joined with an underscore from a previous function. 
+
+It is interesting to see that for most of the characters in the main cast, the average number of letters in a word is below that of the English language ([according to Trinity College](http://www.cs.trincoll.edu/~crypto/resources/LetFreq.html)). Given the nature of the show, it is easy to understand that language is kept simple.
+
+This took us to a new question: how commonly do characters use crutch words? Rather than defining a dictionary of these support words, we decided to leverage on what was available and use the stopwords list again. After all, we assumed this would mean that characters that used words different from those in the dictionary carried more meaning in their dialogues.
+
+```{r crutch_words, echo=TRUE}
+
+crutches_graph(words_df)
+
+```
+
+### Help: Need to rerun after adding stopwords to understand the effect. Right now, it looks the same.
+
+Given that our dataset has a field that identifies whether a scene was deleted or not, we decided to look into what characters were cut out the most. 
+
+```{r edited_out, echo=TRUE}
+
+deleted_scenes_graph(theoffice_df)
+
+```
+
+Unsurprisingly, Michael, Dwight, Jim and Pam lost the most scenes in the show. They are some of the main characters, so it made sense that they lost scenes proportionally.
+
+Andy wasn't in this group, however, which caught our attention. We inspected the data and realized that scenes in the script were only labeled as "deleted" for seasons 1 and 2, before he was added to the cast. 
+
+## What can we know about groups of characters and about their interactions?
+
+Now that we know the characters in a closer way, we are moving on to analyzing their interactions. This will help us see if some characcters have cloques (as happens normally in a professional setting), or if a character is referenced more than others.
+
+This question seems like a good starting point, so we modelled their interactions by counting within dialogues how many times other characters are mentioned. 
+
+```{r interactions, echo=TRUE}
+
+get_graph("kelly")
+
+```
+
+This was a very complicated task, albeit interesting. We now have a way to see whose name is repeated the most by a character. Given the limited space we have in this report, we are including this function in the interactive component of this project, and will leave you to see who is the character most mentioned by Jim (hint: it isn't Pam!).
+
+This analysis gave us an idea: would it be possible to analyze what characters shared a particular scene? We don't have complete information (someone might not have a dialogue, yet be on scene), but the scripts are a powerful tool, so we decided to try. We counted, on a scene basis, how many times a character (or a set) appeared. Given the mockumentary style, we didn't ignore scenes with a single character, as they were talking to the filming crew about their experiences.
+
+```{r chars_scene, echo=TRUE}
+
+screen_time_graph(words_df)
+
+```
+
+Michael and Dwight are by far the characters with the most screentime throughout the series, with several hundreds of scenes, each. Jim and Pam come in third and fourth place, respectively, and then we had our first combination: Jim and Pam shared over 250 scenes throughout the show. Dwight and Michael, and Michael and Jim combinations that have a high frequency throughout the show.
+
+The initial version of this chart was difficult to read, as there were several combinations of characters speaking in the show. This motivated us to dig deeper, as relationships (even fictionals) are built and change over time. In our interactive app, you can choose combinations of characters (only the main cast) and see how they interact season by season. We feel that there is more information in the data than we could write, and invite the reader to see how Jim and Pam's relationship grows after season one.
+
+### Help: We need to redefine colors for this chart. Maybe reducing the number of possibilities. Let's leverage on the interactive component!
+
+## The Office in real life: portrayal of Corporate America and viewership trends through time
+
+By now we have been asking questions about the show, but the one that most readers might have had since the begining is: How many "that's what she said" gags took place throughout the series?
+
+### Help: This function isn´t summarized
+
+```{r TWSS, echo=TRUE}
+thats_what_she_said <- words_df %>% 
+  filter(word == "thats_what_she_said") %>% 
+  group_by(speaker) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq)
+
+ggplot(thats_what_she_said, aes(x=reorder(speaker, Freq), y=Freq, fill = speaker)) +
+  geom_col(color = 'black') + 
+  coord_flip() +
+  labs(title = "    'That'\n                  -She", 
+       x = "", 
+       y="Total number of gags") +
+  scale_colour_manual(values = MyPalette, aesthetics = "fill") +
+    theme(legend.position="none")
+
+```
+
+Given this was Michael's joke, it is clear that he was the main contender, with 24 times. It is interesting to think that the scripts don't carry tone or context, so a character might not have said the phrase as a joke and still ended up in our ranking. This was one of the limitations of our analysis, and it will be hard to fix.
+
+### Check those empty squares!
+
+Now that we talk about it, we wantes to know how balanced was the show in terms of gender equality. We cross referenced our original dataframe with a table containing the genders of the 30 main characters of the show, and dived into it hoping to answer our quesiton.
+
+### Help: Can we switch sex for gender?
+
+```{r female_male_p, echo=TRUE}
+
+character_sex_graph()
+
+```
+
+First, we found that over 66% of the cast throughout the series were male. Does this represent appropriately the professional setting in the USA? We're not sure. However, this sets up a baseline for the next question: are dialogues proportional to the number of characters belonging to each gender?
+
+```{r female_male_d, echo=TRUE}
+
+dialogues_gender_graph(words_df,dialogues_df)
+
+```
+
+Throughout the entire series, the answer is no: despite dominating 66% of the cast, male characters have over 75% of dialogues and 80% of the words spoken in the show. It must be considered that the main cast holds most of the dialogues, and are mostly men, so these findings were not surprising.
+
+It would be interesting to see how, as the series incorporated new characters, the proportion might have changed from season to season.
+
+### Help: This function isn´t summarized
+
+```{r female_male_s, echo=TRUE}
+
+dialogues_by_gen <- merge(dialogues_df, gen, all.x = TRUE) %>%
+  filter(gender %in% c('male', 'female')) %>%
+  group_by(season, gender) %>% 
+  summarize(Freq = n())
+
+dialogues_by_gen$season <- as.factor(dialogues_by_gen$season)
+
+ggplot(dialogues_by_gen, aes(x = season, y = Freq, fill = gender)) + 
+  geom_bar(position = "fill", stat = "identity") + 
+  labs(title = "The ratio of dialogues by gender remains constant through the seasons", 
+       x = "Season", 
+       y = "Percentage of lines") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) 
+
+```
+
+As the show evolved, there were some slight variations in the proportion of dialogues, peaking during the final season. It remains interesting, though, that despite 4 out of the 5 main characters being male, and Michael and Dwight clearly dominating the show, female characters still got 25% of the dialogues.
+
+There was a clear evolution in the show, specially in terms of character development and changes in cast. In the competitive environment of sitcoms, shows must continually innovate to keep their rating levels, so we decided to take a look at ratings for the show.
+
+```{r ratings, echo=TRUE}
+
+viewers_graph()
+
+```
+### Help: It is tough to read the bars; the outline is too thick when compared to the filling
+
+It is interesting to see spike in viewership for episodes 14 and 15 in season 5, that represented over 2.5 times the usual viewership. We investigated the event and realized the episodes aired right after the SuperBowl, making them outliers in the series. 
+
+# Executive Summary
+
+## Req. Provide a short nontechnical summary of the most revealing findings of your analysis written for a nontechnical audience. The length should be approximately two pages (if we were using pages…) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
+
+## Req. cont. Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. 
+
+A version of this section of the document has been prepared as a separate file in `file="../ConferenceRoom/Briefing.Rmd`.
+
+### Help: We must choose what goes here, as a mini-story line
+### Help: Further cleaning (adjusting font sizes) will be needed.
+
+# Interactive component
+
+## Instructions: Select one (or more) of your key findings to present in an interactive format. Be selective in the choices that you present to the user; the idea is that in 5-10 minutes, users should have a good sense of the question(s) that you are interested in and the trends you’ve identified in the data. In other words, they should understand the value of the analysis, be it business value, scientific value, general knowledge, etc.
+
+As we previously mentioned, it was very interesting to see how the interaction of characters evolved in the show, so we decided to move those elements to (path for Shiny App). Although we reached some conclusions through this analysis  - confirming what our experience as viewers had told us - we believe the real finding here is that summarizing data in a graphical way allows the user to process information faster and easier.
+
+As a starting point, may we suggest you see in which season do Andy's interactions with the cast start, or how do interactions with Michael change after season 7?
+
+By creating an App that lets users choose their favorite characters and see who they interacted with through each season, we avoided cluttering this document with text, and help our readers reach their own conclusions. We expect that the interactive component of this project will assist our audience in improving their knowledge in popular culture and remembering the fun they had while watching the show.
+
+### Help: Link to component?
+
+# Conclusion
+
+## Instructions: Discuss limitations and future directions, lessons learned.
+
+We believe the main challenge in this project was remaining succinct in a matter we are so passionate about. Upon each answer to a question we might have asked, we could find several more, sometimes more interesting, that we couldn't include in a report. We appreciated the existence of a framework that could guide how to ask each question, how to assign it to a subject, and how to develop it with the objective of communicating our findings to an audience.
+
+Although the dataset was priceless, in that it helped us learn more about the show, we found it was a very limited tool from a Data Scientist perspective. It only helped us determine what was being said during a scene, but not much else. As a follow-up step, we would look into the actions written in the scripts (Wrileys), to understand a bit more of what happened in a given scene. 
+
+A further limitation was our need to establish constructs for the questions we asked to the data. For instance, we had to find an indicator that could help us understand if an average word was long or not; however, for complex questions, building a baseline implied specilating, and we hoped to remain neutral. We lacked the tools, for instance, to conclude whether Michael was indeed smarter than Oscar. This was a trivial one, but it shows the difficulties faced when working with a natural language database.
+
+A step we would like to continue with in this project is to use tf-idf to determine the most important word for a given character or episode, and ask our audience if they can help us identify them. This feature was deemed as a nice-to-have in the assignment, as it was not related to exploratory analysis, and thus wasn't a priority that could be met with the time we had.
+
+### Help: Falta un cierre del documento, pero en este momento no se me ocurre algo. Como un párrafo de lecciones aprendidas sobre el análisis exploratorio y la presentación de datos.
+
+# Sources
+### Help: Add any other sources I might have overlooked 
+
+OfficeQuotes.net - The Comprehensive Source for The Office Quotes! (n.d.). Retrieved November 10, 2018, from http://officequotes.net/
+
+The-office-lines. (n.d.). Retrieved November 10, 2018, from https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974
+
+List of The Office (U.S. TV series) episodes. (2018, November 07). Retrieved December 5, 2018, from https://en.wikipedia.org/wiki/List_of_The_Office_(U.S._TV_series)_episodes
+
+Percentages of Letter Frequencies per 1000 Words. (n.d.). Retrieved December 8, 2018, from http://www.cs.trincoll.edu/~crypto/resources/LetFreq.html
