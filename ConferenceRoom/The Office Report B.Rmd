@@ -190,7 +190,7 @@ This analysis gave us an idea: would it be possible to analyze what characters s
 
 ```{r chars_scene, echo=TRUE}
 
-screen_time_graph(words_df)
+get_most_shared_scenes(words_df,'jim',6)
 
 ```
 
@@ -207,20 +207,9 @@ By now we have been asking questions about the show, but the one that most reade
 ### Help: This function isn´t summarized
 
 ```{r TWSS, echo=TRUE}
-thats_what_she_said <- words_df %>% 
-  filter(word == "thats_what_she_said") %>% 
-  group_by(speaker) %>% 
-  summarise(Freq = n()) %>% 
-  arrange(-Freq)
 
-ggplot(thats_what_she_said, aes(x=reorder(speaker, Freq), y=Freq, fill = speaker)) +
-  geom_col(color = 'black') + 
-  coord_flip() +
-  labs(title = "    'That'\n                  -She", 
-       x = "", 
-       y="Total number of gags") +
-  scale_colour_manual(values = MyPalette, aesthetics = "fill") +
-    theme(legend.position="none")
+phrase_graph(words_df)
+
 
 ```
 
@@ -254,6 +243,10 @@ It would be interesting to see how, as the series incorporated new characters, t
 
 ```{r female_male_s, echo=TRUE}
 
+dialogues_by_gen_graph <- function(dialogues_df){
+  
+
+gen <- read.csv(file="data/main_cast_gender.csv", header=TRUE, sep=",")
 dialogues_by_gen <- merge(dialogues_df, gen, all.x = TRUE) %>%
   filter(gender %in% c('male', 'female')) %>%
   group_by(season, gender) %>% 
@@ -267,6 +260,9 @@ ggplot(dialogues_by_gen, aes(x = season, y = Freq, fill = gender)) +
        x = "Season", 
        y = "Percentage of lines") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) 
+
+
+}
 
 ```
 
