@@ -149,12 +149,16 @@ words_df <- dialogues_df %>%
   filter(word != "")
 
 
-MyPalette <- c('#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000')
-
 
 # Antonio
 
 # 5) Who uses the most crutch words?
+
+MyPalette <- c(andy = '#e6194b', angela = '#fabebe', darryl = '#ffe119', dwight =  '#3cb44b', erin = '#f58231', jan =  '#911eb4',
+               jim = '#46f0f0', kelly = '#f032e6', kevin = '#bcf60c', michael = '#4363d8', oscar = '#008080', pam = '#e6beff',
+               phyllis ='#9a6324',roy = '#fffac8',ryan = '#ffd8b1', stanley= '#808080', toby = '#000000')
+
+
 
 crutches <- words_df
 crutches$crutch <- crutches$word %in% stopwords()
@@ -174,9 +178,9 @@ top_c <- head(aux_c,15)
 top_c$freq <- top_c$freq/1000
 
 
-ggplot(data = top_c, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq, colour= speaker)) +
-  geom_bar(stat = 'identity') + 
-  scale_colour_manual(values = MyPalette) +
+ggplot(data = top_c, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq, fill= speaker)) +
+  geom_bar(stat = 'identity',colour='black') + 
+  scale_colour_manual(values = MyPalette, aesthetics = "fill") +
   labs(title="Most crutches by character (in thousands)") +
   labs(x="Character", y="Count") + 
   ylim(c(0,160)) 
@@ -186,21 +190,20 @@ ggplot(data = top_c, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq, c
 
   
 # 6) Who got cut out? Who lost the most scenes due to the editors?
-  
 deleted_scenes <- theoffice_df %>% 
   filter(deleted == TRUE) %>% 
   select(speaker,season) %>% 
   group_by(speaker) %>% #,season
   summarize(freq = n())
 
-
+deleted_scenes$speaker <- tolower(deleted_scenes$speaker)
 aux_ds <- deleted_scenes[order(-deleted_scenes$freq),] 
 top_deleted <- head(aux_ds,15)
 
 #ratings$Season <- as.factor(ratings$Season)
-ggplot(data = top_deleted, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq,colour= speaker)) +
-  geom_bar(stat = 'identity') + 
-  scale_colour_manual(values = MyPalette) +
+ggplot(data = top_deleted, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = freq,fill= speaker)) +
+  geom_bar(stat = 'identity',colour = 'black') + 
+  scale_colour_manual(values = MyPalette,aesthetics = "fill") +
   labs(title="Most scenes deleted by character") +
   labs(x="Character", y="Count") + 
   ylim(c(0,600)) 
