@@ -15,16 +15,9 @@ for (file in function_files){
   source(file, local = TRUE)
 }
 
-ui <- navbarPageWithInputs(
-  title = h4("KPIs Health"),
-  theme = shinytheme("cosmo"),
-  inputs = selectInput(
-    "brand",
-    label = "",
-    choices = list("BRAND1" = "brand1", "BRAND2" = "brand2"),
-    selected = "brand1",
-    width = "200"
-  ),
+ui <- navbarPage(
+  title = h4("Inside The Office"),
+  theme = shinytheme("spacelab"),
   tabPanel(
     title = h4("Summary"),
     sidebarPanel(
@@ -65,6 +58,18 @@ ui <- navbarPageWithInputs(
         choices = list("Last Month" = "last_month", "Last Quarter" = "last_quarter", "Last Year" = "last_year"),
         selected = "last_quarter"
       ),
+      radioButtons(
+        "speaker",
+        label = h3("Character"),
+        choices = list(
+          "Michael" = "michael",
+          "Dwight" = "dwight",
+          "Jim" = "jim",
+          "Pam" = "pam",
+          "Andy" = "andy" 
+        ),
+        selected = "michael"
+      ),
       # radioButtons(
       #   "comparison_type",
       #   label = h3("Comparison type"),
@@ -81,6 +86,20 @@ ui <- navbarPageWithInputs(
     ),
     mainPanel(
       tabsetPanel(
+        tabPanel(
+          "Most Mentioned Names",
+          # h2(textOutput("doing_title")),
+          column(
+            10,
+            align = "center",
+            div(
+              style="display:inline-block",
+              h3("Most Mentioned Names"),
+              hr(),
+              plotOutput("most_mentioned_names", height = 300)
+            )
+          )
+        ),
         tabPanel(
           "LATEST CHANGE",
           # h2(textOutput("doing_title")),
@@ -196,6 +215,26 @@ ui <- navbarPageWithInputs(
           label = h5("Select Region"),
           choices = list("North" = "North", "South" = "South", "East" = "East", "West" = "West"),
           selected= c("North","South","East","West")
+        )
+      ),
+      hr(),
+      dropdownButton(
+        label = "Season", status = "default", width = 30,
+        checkboxGroupInput(
+          "seasons",
+          label = h5("Select Season"),
+          choices = list(
+            "One" = 1,
+            "Two" = 2,
+            "Three" = 3,
+            "Four" = 4,
+            "Five" = 5,
+            "Six" = 6,
+            "Seven" = 7,
+            "Eight" = 8,
+            "Nine" = 9
+          ),
+          selected= c(1:9)
         )
       ),
       hr(),

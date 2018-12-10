@@ -21,6 +21,8 @@ library(DT)
 library(gridExtra)
 library(magrittr)
 library(purrrlyr)
+library(forcats)
+library(stringr)
 
 function_files <- sourceDirectory("functions")
 for (file in function_files){
@@ -31,7 +33,7 @@ shinyServer(function(input, output) {
 
   output$kpi <- renderUI({
     
-    file_name <- paste("data/",input$brand,".csv", sep="")
+    file_name <- "data/brand1.csv"
     respondent_data <- import_respondent_data(file_name)
     kpis <- colnames(respondent_data)[startsWith(colnames(respondent_data),"KPI")]
 
@@ -52,7 +54,7 @@ shinyServer(function(input, output) {
     if (!is.null(input$test_kpi)) {
       kpi <- input$test_kpi
     } else {
-      file_name <- paste("data/",input$brand,".csv", sep="")
+      file_name <- "data/brand1.csv"
       respondent_data <- import_respondent_data(file_name)
       kpis <- colnames(respondent_data)[startsWith(colnames(respondent_data),"KPI")]
       kpi <- kpis[1]
@@ -62,7 +64,7 @@ shinyServer(function(input, output) {
     frequency <- get_frequency(data_periods)
     breakpoints_criteria <- "kalman_series"
     
-    brand <- brand <- input$brand
+    brand <- "brand1"
     summary_compare_versus <- input$summary_compare_versus
     grouping_variables <- input$grouping_variables
     noise_filter <- input$noise_filter
@@ -70,10 +72,29 @@ shinyServer(function(input, output) {
     age <- input$age
     gender <- input$gender
     region <- input$region
+    speaker <- input$speaker
+    seasons <- input$seasons
     
     comparison_type <- "differences"
     file_name <- paste("data/",brand,".csv", sep="")
     respondent_data <- import_respondent_data(file_name)
+    
+    file_name_theoffice <- "theoffice_words"
+    file_path_theoffice <- paste0("data/", file_name_theoffice,".csv")
+    words_df <- read_csv(file_path_theoffice)
+    chars <- words_df %>% 
+      group_by(speaker) %>% 
+      summarise(Freq = n()) %>% 
+      top_n(100, Freq) %>%
+      .$speaker
+    chars <- chars[
+      !chars %in% c(
+        "all", "man", "someone", "everyone", "everybody", "office", "guy",
+        "manager", "phone", "woman", "together"
+      )
+    ]
+    
+    filtered_words_df <- filter_words_df(words_df, speaker, seasons)
     
     filtered_data  <- filter_respondent_data(respondent_data,age,gender,region)
 
@@ -83,7 +104,7 @@ shinyServer(function(input, output) {
     
     # SUMMARY
 
-        output$summary_plot <- renderDataTable({
+    output$summary_plot <- renderDataTable({
       aux <- plot_summary_data(respondent_data, grouping_variables, summary_compare_versus)
       print(aux)
       return(aux)
@@ -92,6 +113,12 @@ shinyServer(function(input, output) {
     # output$doing_title <- renderText({
     #   return(paste("How is ",toupper(brand),"doing?"))
     # })
+    
+    # NAMES MENTIONED
+    output$most_mentioned_names <- renderPlot({
+      shiny::validate(need(input$seasons,"Check at least one Season!"))
+      return(get_most_mentioned_names(filtered_words_df, chars))
+    }, height = 300, width = 750)
     
     # HEALTH MAP
     

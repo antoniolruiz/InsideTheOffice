@@ -7,6 +7,16 @@ import_respondent_data <- function(file_name){
   return(respondent_data)
 } 
 
+filter_words_df <- function(words_df, character, seasons){
+  if(!is.null(seasons)) {
+    filtered_words_data <- words_df %>% 
+      filter(speaker == character, season %in% seasons)
+    return(filtered_words_data)
+  } else {
+    return()
+  }
+}
+
 filter_respondent_data <- function(respondent_data, age, gender, region){
   
   if(!is.null(age) & !is.null(gender) & !is.null(region)) {
