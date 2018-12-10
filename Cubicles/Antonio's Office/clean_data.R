@@ -150,9 +150,6 @@ words_df <- dialogues_df %>%
 
 
 
-# Antonio
-# 2,7
-
 
 MyPalette <- c(andy = '#e6194b', angela = '#fabebe', darryl = '#ffe119', dwight =  '#3cb44b', erin = '#f58231', jan =  '#911eb4',
                jim = '#46f0f0', kelly = '#f032e6', kevin = '#bcf60c', michael = '#4363d8', oscar = '#008080', pam = '#e6beff',
@@ -196,13 +193,6 @@ get_interactions_by_char <- function(char, interact_df) {
   return(interactions)
 }
 
-
-interactions <- get_interactions_by_char("kelly", interact_df)
-aux_i <- interactions[order(-interactions$Freq),] 
-top_i <- head(aux_i,10)
-upper_lim <- as.numeric(top_i$Freq[1]) +10
-
-
 get_graph <- function(character)
   {
   title <- paste("Interactions of",character)
@@ -211,8 +201,9 @@ get_graph <- function(character)
   aux_i <- interactions[order(-interactions$Freq),] 
   top_i <- head(aux_i,10)
   upper_lim <- as.numeric(top_i$Freq[1]) +10
+  colnames(top_i) <- c('speaker','Freq')
   
-  ggplot(data = top_i, aes(x = fct_reorder(Var1,Freq,.desc = TRUE), y = Freq, fill= Var1)) +
+  ggplot(data = top_i, aes(x = fct_reorder(speaker,Freq,.desc = TRUE), y = Freq, fill= speaker)) +
     geom_bar(stat = 'identity',colour='black') + 
     scale_colour_manual(values = MyPalette, aesthetics = "fill") +
     labs(title=title) +
@@ -221,8 +212,8 @@ get_graph <- function(character)
 }
 
 get_graph("kelly")
-# 5) Who uses the most crutch words?
 
+# 5) Who uses the most crutch words?
 
 crutches <- words_df
 crutches$crutch <- crutches$word %in% stopwords()
@@ -275,7 +266,38 @@ ggplot(data = top_deleted, aes(x = fct_reorder(speaker,freq,.desc = TRUE), y = f
 #colnames(top_deleted)
 #View(top_deleted)
 
+# 7) What are the groups of characters that share the most screen time?
+  
 
+get_chars_involved <- function(speaker) {
+  speaker %>% 
+    unique %>% 
+    sort %>% 
+    paste_words("_")
+}
+
+chars_per_scene <- words_df %>% 
+  group_by(season, episode, scene) %>% 
+  summarise(chars = get_chars_involved(speaker)) %>% 
+  ungroup %>% 
+  group_by(chars) %>% 
+  summarise(Freq = n()) %>% 
+  arrange(-Freq) 
+
+chars_per_scene$chars <- tolower(chars_per_scene$chars)
+aux_cps <- chars_per_scene[order(-chars_per_scene$Freq),] 
+top_cps <- head(aux_cps,25)
+colnames(top_cps) <- c('speaker','Freq')
+
+ggplot(data = top_cps, aes(x = fct_reorder(speaker,Freq,.desc = TRUE), y = Freq,fill= speaker)) +
+  geom_bar(stat = 'identity',colour = 'black') + 
+  #scale_colour_manual(values = MyPalette,aesthetics = "fill") +
+  labs(title="Most screen time (includes time with camera man)") +
+  labs(x="Characters", y="Count") + 
+  theme(axis.text.x=element_blank())+
+  ylim(c(0,780)) 
+
+  
 # 10) As the show progressed, how did ratings change?
 
 mydir <- "C:/Users/ganto/OneDrive/Documents/GitHub/InsideTheOffice/Cubicles/Antonio's Office"
