@@ -35,7 +35,8 @@ get_most_mentioned_names_plot <- function(freq_names_df) {
   ) +
     geom_bar(stat = "identity") +
     xlab("") +
-    ylab("")
+    ylab("") +
+    theme_grey(base_size = 18)
   return(mentioned_names_plot)
 }
 

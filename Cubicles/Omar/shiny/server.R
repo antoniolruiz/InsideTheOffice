@@ -90,7 +90,7 @@ shinyServer(function(input, output) {
     chars <- chars[
       !chars %in% c(
         "all", "man", "someone", "everyone", "everybody", "office", "guy",
-        "manager", "phone", "woman", "together"
+        "manager", "phone", "woman", "together", "girl"
       )
     ]
     
@@ -114,7 +114,11 @@ shinyServer(function(input, output) {
     #   return(paste("How is ",toupper(brand),"doing?"))
     # })
     
-    # NAMES MENTIONED
+    # MENTIONED NAMES
+    output$mentioned_names <- renderText({
+      return(paste0("Which are the names that ", toupper(speaker), " mentions the most?"))
+    })
+    
     output$most_mentioned_names <- renderPlot({
       shiny::validate(need(input$seasons,"Check at least one Season!"))
       return(get_most_mentioned_names(filtered_words_df, chars))

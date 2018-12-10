@@ -88,13 +88,12 @@ ui <- navbarPage(
       tabsetPanel(
         tabPanel(
           "Most Mentioned Names",
-          # h2(textOutput("doing_title")),
+          h2(textOutput("mentioned_names")),
           column(
             10,
             align = "center",
             div(
               style="display:inline-block",
-              h3("Most Mentioned Names"),
               hr(),
               plotOutput("most_mentioned_names", height = 300)
             )
