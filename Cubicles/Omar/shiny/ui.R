@@ -88,6 +88,19 @@ ui <- navbarPage(
               plotOutput("most_shared_scenes", height = 300)
             )
           )
+        ),
+        tabPanel(
+          "Words by Dialogue",
+          h2(textOutput("dialogues_length_title")),
+          column(
+            10,
+            align = "center",
+            div(
+              style="display:inline-block",
+              hr(),
+              plotOutput("avg_dialogues_length", height = 300)
+            )
+          )
         )
       ),
       width = 8

@@ -61,5 +61,14 @@ shinyServer(function(input, output) {
       return(get_most_shared_scenes(words_df, speaker, seasons))
     }, height = 300, width = 750)
     
+    # DIALOGUES LENGTH
+    output$dialogues_length_title <- renderText({
+      return(paste0("On average, how long are the dialogues of ", toupper(speaker), "?"))
+    })
+    
+    output$avg_dialogues_length <- renderPlot({
+      shiny::validate(need(input$seasons,"Check at least one Season!"))
+      return(get_avg_dialogues_length(filtered_words_df))
+    }, height = 300, width = 750)
   })
 })

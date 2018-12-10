@@ -1,8 +1,12 @@
 get_most_shared_scenes <- function(words_df, char, seasons) {
   char_scenes_df <- get_char_scenes(words_df, char, seasons)
-  shared_scenes_df <- get_shared_scenes(words_df, char, char_scenes_df)
-  most_shared_scenes_plot <- get_most_shared_scenes_plot(shared_scenes_df)
-  return(most_shared_scenes_plot)
+  if(nrow(char_scenes_df) > 0) {
+    shared_scenes_df <- get_shared_scenes(words_df, char, char_scenes_df)
+    most_shared_scenes_plot <- get_most_shared_scenes_plot(shared_scenes_df)
+    return(most_shared_scenes_plot)
+  } else {
+    return()
+  }
 }
 
 get_char_scenes <- function(words_df, char, seasons){
