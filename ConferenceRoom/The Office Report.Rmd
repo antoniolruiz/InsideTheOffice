@@ -41,7 +41,7 @@ As a team, each one of us contributed to every general task (cleaning, analysis,
 ## Instructions: Describe how the data was collected, how you accessed it, and any other noteworthy features.
 Thanks to the show's large number of fans there are several websites dedicated to different aspects of the series. We found a repository from a fan's blog, called Officequotes.net. This repository includes every dialogue from the script, specifying the season, episode and scene in which it was said, as well as its speaker and whether the scene was edited out of the show or not.
 
-The data is stored as a Google Sheet in (https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed it to understand the conditions it was in. In general, the dataset was properly structured -which eased the cleaning process. The tasks we followed are described in detail on the next session of the report.
+The data is stored as a Google Sheet [here](https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974), so we reviewed it to understand the conditions it was in. In general, the dataset was properly structured -which eased the cleaning process. The tasks we followed are described in detail on the next session of the report.
 
 Furthermore, one of the questions required us to retrieve data that wasn't available on the original dataset. We found ratings at a per-episode level in wikipedia.org (which took this information from nielsen.com) and copied the information on a csv file. Although the ratings correspond to the original airdate's audience, we assume that this factor is a constant (i.e, it is a fair comparisson to evaluate conclusions about viewership for any episode in the seried based on the rating recieved during its first cast), and used it for our project. We also created a table with the main cast and the gender of each character in order to include this factor in our analysis. The genders were populated manually into the csv file.
 
@@ -489,7 +489,7 @@ dialogues_by_gen$season <- as.factor(dialogues_by_gen$season)
 
 ggplot(dialogues_by_gen, aes(x = season, y = Freq, fill = gender)) + 
   geom_bar(position = "fill", stat = "identity") + 
-  labs(title = "The proportion of dialogues by gender remains constant through the show", 
+  labs(title = "The ratio of dialogues by gender remains constant through the seasons", 
        x = "Season", 
        y = "Percentage of lines") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) 
@@ -563,7 +563,12 @@ A step we would like to continue with in this project is to use tf-idf to determ
 ### Help: Falta un cierre del documento, pero en este momento no se me ocurre algo. Como un párrafo de lecciones aprendidas sobre el análisis exploratorio y la presentación de datos.
 
 # Sources
-### Help: Hay que hacer esto bien. Probablemente al final 
+### Help: Add any other sources I might have overlooked 
 
+OfficeQuotes.net - The Comprehensive Source for The Office Quotes! (n.d.). Retrieved November 10, 2018, from http://officequotes.net/
 
+The-office-lines. (n.d.). Retrieved November 10, 2018, from https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974
 
+List of The Office (U.S. TV series) episodes. (2018, November 07). Retrieved December 5, 2018, from https://en.wikipedia.org/wiki/List_of_The_Office_(U.S._TV_series)_episodes
+
+Percentages of Letter Frequencies per 1000 Words. (n.d.). Retrieved December 8, 2018, from http://www.cs.trincoll.edu/~crypto/resources/LetFreq.html
