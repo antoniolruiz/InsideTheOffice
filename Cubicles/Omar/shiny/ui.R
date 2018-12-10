@@ -65,7 +65,7 @@ ui <- navbarPage(
       tabsetPanel(
         tabPanel(
           "Most Mentioned Names",
-          h2(textOutput("mentioned_names")),
+          h2(textOutput("mentioned_names_title")),
           column(
             10,
             align = "center",
@@ -73,6 +73,19 @@ ui <- navbarPage(
               style="display:inline-block",
               hr(),
               plotOutput("most_mentioned_names", height = 300)
+            )
+          )
+        ),
+        tabPanel(
+          "Most Shared Scenes",
+          h2(textOutput("shared_scenes_title")),
+          column(
+            10,
+            align = "center",
+            div(
+              style="display:inline-block",
+              hr(),
+              plotOutput("most_shared_scenes", height = 300)
             )
           )
         )

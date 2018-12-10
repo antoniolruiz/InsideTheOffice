@@ -42,7 +42,7 @@ shinyServer(function(input, output) {
     # SUMMARY
     
     # MENTIONED NAMES
-    output$mentioned_names <- renderText({
+    output$mentioned_names_title <- renderText({
       return(paste0("Which are the names that ", toupper(speaker), " mentions the most?"))
     })
     
@@ -50,6 +50,16 @@ shinyServer(function(input, output) {
       shiny::validate(need(input$seasons,"Check at least one Season!"))
       return(get_most_mentioned_names(filtered_words_df, chars))
     }, height = 300, width = 750)
-
+    
+    # SHARED SCENES
+    output$shared_scenes_title <- renderText({
+      return(paste0("With whom ", toupper(speaker), " shares more scenes?"))
+    })
+    
+    output$most_shared_scenes <- renderPlot({
+      shiny::validate(need(input$seasons,"Check at least one Season!"))
+      return(get_most_shared_scenes(words_df, speaker, seasons))
+    }, height = 300, width = 750)
+    
   })
 })
