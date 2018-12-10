@@ -146,12 +146,9 @@ ggplot(words_by_char, aes(x = reorder(speaker, -Freq), y = Freq)) +
 
 This chart allows us to understand 2 things: there is a large gap after the top 5 characters in both number of lines and in words per character, and the general participation of the cast doesn't change. This might be due to the number of seasons and episodes, where everyone had a proportional chance to say a number of lines with a proportional number of words. We noticed it is difficult to understand this as 2 separate charts, so we will merge them into a single one in the executive summary.
 
-Now that we know that 
-
-12) Who is the character that says the longest lines?
+The next step to determine if the distribution of screen time is proportional indeed, we would like to find out if there is a relation between the average characters per line of speech for each character, and the maximum length of a line they delivered in the show. 
 
 ```{r longest_lines, echo=TRUE}
-### Changed dialogues_df; leaving it here in the meanwhile
 
 dialogues_df <- wrylies_dialogue_df %>% 
   filter(!deleted) %>% 
@@ -161,17 +158,22 @@ dialogues_df <- wrylies_dialogue_df %>%
 dialogue_length_df <- dialogues_df %>%
   select (speaker, dialogue_length) %>%
   group_by(speaker) %>% 
-  summarize (avg_d_length = sum(dialogue_length)/n(), max_dialogue = max(dialogue_length))%>%
+  summarize (avg_d_length = sum(dialogue_length)/n(), max_dialogue = max(dialogue_length)) %>%
   top_n(15)
 
-ggplot(dialogue_length_df, aes(x = reorder(speaker, max_dialogue), y = max_dialogue)) + 
-  geom_point() + 
-  coord_flip() + 
-  labs(title = "Who speaks the longest lines?", x = "Character", y="Average characters per line of speech") + 
- # lims(y=c(20,35)) + 
-  scale_colour_brewer(palette="Set1")
+filtered_dial <- gather(dialogue_length_df, attribute, value, -speaker)
+
+ggplot(filtered_dial, aes(x = value, y = fct_reorder2(speaker, attribute == 'max_dialogue', value, .desc = FALSE))) +
+  geom_point(aes(color = attribute)) + 
+  labs(title = "Longest line and average length of line for each character", x = "Number of characters", y="Character")+ 
+  theme(legend.position="top", legend.title=element_blank() ) + scale_colour_discrete(labels=c("Average dialogue", "Longest dialogue"))
 
 ```
+
+From this chart, we can see that the lines of each character in the main cast are of the same length, approximately (although it would be interesting to take a closer look into this matter). We can also determine that the 5 main characters of the show are amongst the 9 characters with the longest line said, which makes sense due to how their characters evolved throughout the show. Particularly, Andy's longest line in the show is the one that ranks the lowest, with Robert, Jan, Erin and DeAngelo topping him for longest dialogue in the show.
+
+Now that we have our hands in this data, we realized that we can go one level deeper, and replicate at a word level what we just did for dialogues. This might shine some light over a character being portrayed as smarter in the show, as the ability to use more complicated words is linked to the perception of intelligence. 
+
 
 3) Who is the character that says the longest words?
 ```{r longest, echo=TRUE}
@@ -185,14 +187,15 @@ words_df <- dialogues_df %>%
 word_length_df <- words_df %>%
   select (speaker, word_length) %>%
   group_by(speaker) %>% 
-  summarize (avg_length = sum(word_length)/n(), max_word = max(word_length))
+  summarize (avg_length = sum(word_length)/n(), max_word = max(word_length)) %>%
+  top_n(15)
 
-ggplot(word_length_df, aes(x = reorder(speaker, max_word), y = max_word)) + 
-  geom_point() + 
-  coord_flip() + 
-  labs(title = "Who speaks the longest lines?", x = "Character", y="Average characters per line of speech") + 
-  lims(y=c(20,35)) + 
-  scale_fill_brewer(palette="Set1")
+filtered_word <- gather(word_length_df, attribute, value, -speaker)
+
+ggplot(filtered_word, aes(x = value, y = fct_reorder2(speaker, attribute == 'max_word', value, .desc = FALSE))) +
+  geom_point(aes(color = attribute)) + 
+  labs(title = "Longest word and average length of word for each character", x = "Number of characters", y="Character") + 
+  theme(legend.position="top", legend.title=element_blank() ) + scale_colour_discrete(labels=c("Average word", "Longest word"))
 
 ```
 
@@ -256,7 +259,6 @@ get_interactions_by_char("kelly", interact_df)
 ```
 
 7) What are the groups of characters that share the most screen time?
-##By the way the table is constructed, we can see individual characters, as well as groups. Should we change this?
 ```{r chars_scene, echo=TRUE}
 ##Shall we move the function elsewhere?
 get_chars_involved <- function(speaker) {
@@ -295,8 +297,10 @@ ggplot(thats_what_she_said, aes(x=reorder(speaker, -Freq), y=Freq)) +
 
 ```
 
+
 9) Do female characters have as much dialogues as male characters? 
-### Is this information relevant enough to include in previous charts?
+
+
 ```{r female_male, echo=TRUE}
 gen <- read.csv(file="../Cubicles/Jose/main_cast_gender.csv", header=TRUE, sep=",")
 
