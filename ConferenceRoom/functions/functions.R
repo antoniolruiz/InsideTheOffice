@@ -184,7 +184,9 @@ get_vars <-  function(theoffice_df){
     filter(word != "")%>%
     mutate(word_length = nchar(word))
   
-  return (list(wrylies_dialogue_df,dialogues_df,words_df))
+  words_df2 <- words_df %>% 
+    filter(!grepl("_",word))
+  return (list(wrylies_dialogue_df,dialogues_df,words_df,words_df2))
   
 }
 
@@ -302,6 +304,9 @@ crutches_graph <- function(words_df){
   crutches <- crutches %>% 
     mutate(crutch = ifelse(crutch == TRUE,1,0))
   
+  crutches <- crutches %>% 
+    filter(!grepl("0",crutch))
+  
   count_c <- crutches %>%
     select(speaker,crutch) %>% 
     group_by(speaker) %>% 
@@ -317,7 +322,7 @@ crutches_graph <- function(words_df){
     scale_colour_manual(values = MyPalette, aesthetics = "fill") +
     labs(title="Most crutch words by character (in thousands)") +
     labs(x="Character", y="Words") + 
-    ylim(c(0,160)) +
+    ylim(c(0,80)) +
     theme(legend.position="none")
   
 }
@@ -559,10 +564,13 @@ get_most_shared_scenes_plot <- function(shared_scenes_df) {
     aes(x = reorder(speaker, -shared_scenes), y = shared_scenes, fill= speaker)
   ) +
     geom_bar(stat = "identity", color = 'black') +
-    xlab("") +
-    ylab("") +
+    labs(title="Jim's most common character interactions") +
+    labs(x="Character", y="Shared scenes") + 
+    theme(legend.position="none") +
     scale_colour_manual(values = MyPalette, aesthetics = "fill") 
   return(most_shared_scenes_plot)
+ 
+
 }
 
 phrase_graph <- function(words_df){
