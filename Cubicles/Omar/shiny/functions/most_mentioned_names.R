@@ -29,14 +29,17 @@ get_freq_names <- function(names_df) {
 }
 
 get_most_mentioned_names_plot <- function(freq_names_df) {
+  UpdatedPalette <- update_palette(freq_names_df$character, MyPalette)
   mentioned_names_plot <- ggplot(
     data = freq_names_df,
-    aes(x = character, y = Freq)
+    aes(x = character, y = Freq, fill = character)
   ) +
-    geom_bar(stat = "identity") +
+    geom_bar(stat = "identity", colour = "black") +
     xlab("") +
     ylab("") +
-    theme_grey(base_size = 18)
+    theme_base(base_size = 18) +
+    scale_colour_manual(values = UpdatedPalette, aesthetics = "fill") +
+    theme(legend.position="none")
   return(mentioned_names_plot)
 }
 

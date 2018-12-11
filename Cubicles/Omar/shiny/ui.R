@@ -17,28 +17,11 @@ for (file in function_files){
 ui <- navbarPage(
   title = h4("Inside The Office"),
   theme = shinytheme("spacelab"),
-  # tabPanel(
-  #   title = h4("Summary"),
-  #   sidebarPanel(
-  #     h2("Settings"),
-  #     hr(),
-  #     width = 2
-  #   ),
-  #   mainPanel(
-  #     column(
-  #       12,
-  #       align = "center",
-  #       h3("Brand Status")
-  #       # dataTableOutput("summary_plot", height=500)
-  #     ),
-  #     width = 10
-  #   )
-  # ),
   tabPanel(
-    title = h4("Analysis by Character"),
+    title = h4("Interactions"),
     sidebarPanel(
       radioButtons(
-        "speaker",
+        "speaker1",
         label = h2("Character"),
         choices = list(
           "Michael" = "michael",
@@ -72,7 +55,8 @@ ui <- navbarPage(
             div(
               style="display:inline-block",
               hr(),
-              plotOutput("most_mentioned_names", height = 300)
+              plotOutput("most_mentioned_names", height = 300),
+              h5("Note: If the graph is not shown, it is because the chosen character does not appear in the selected seasons.")
             )
           )
         ),
@@ -85,33 +69,8 @@ ui <- navbarPage(
             div(
               style="display:inline-block",
               hr(),
-              plotOutput("most_shared_scenes", height = 300)
-            )
-          )
-        ),
-        tabPanel(
-          "Words by Dialogue",
-          h2(textOutput("dialogues_length_title")),
-          column(
-            10,
-            align = "center",
-            div(
-              style="display:inline-block",
-              hr(),
-              plotOutput("avg_dialogues_length", height = 300)
-            )
-          )
-        ),
-        tabPanel(
-          "Lines Percentage",
-          h2(textOutput("lines_perc_title")),
-          column(
-            10,
-            align = "center",
-            div(
-              style="display:inline-block",
-              hr(),
-              plotOutput("lines_perc", height = 300)
+              plotOutput("most_shared_scenes", height = 300),
+              h5("Note: If the graph is not shown, it is because the chosen character does not appear in the selected seasons.")
             )
           )
         )
@@ -141,6 +100,65 @@ ui <- navbarPage(
       ),
       hr(),
       width = 2
+    )
+  ),
+  tabPanel(
+    title = h4("Evolution"),
+    sidebarPanel(
+      radioButtons(
+        "speaker2",
+        label = h2("Character"),
+        choices = list(
+          "Michael" = "michael",
+          "Dwight" = "dwight",
+          "Jim" = "jim",
+          "Pam" = "pam",
+          "Andy" = "andy",
+          "Angela" = "angela",
+          "Kevin" = "kevin",
+          "Erin" = "erin",
+          "Ryan" = "ryan",
+          "Oscar" = "oscar",
+          "Darryl" = "darryl",
+          "Kelly" = "kelly",
+          "Jan" = "jan",
+          "Toby" = "toby",
+          "Phyllis" = "phyllis"
+        ),
+        selected = "michael"
+      ),
+      width = 2
+    ),
+    mainPanel(
+      tabsetPanel(
+        tabPanel(
+          "Words by Dialogue",
+          h2(textOutput("dialogues_length_title")),
+          column(
+            10,
+            align = "center",
+            div(
+              style="display:inline-block",
+              hr(),
+              plotOutput("avg_dialogues_length", height = 300)
+            )
+          )
+        ),
+        tabPanel(
+          "Lines Percentage",
+          h2(textOutput("lines_perc_title")),
+          column(
+            10,
+            align = "center",
+            div(
+              style="display:inline-block",
+              hr(),
+              plotOutput("lines_perc", height = 300)
+            )
+          )
+        )
+      ),
+      width = 10
     )
   )
 )

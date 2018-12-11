@@ -1,7 +1,7 @@
 get_lines_perc <- function(dialogues_df, char, seasons) {
   char_lines_df <- get_char_lines(dialogues_df, char, seasons)
   lines_perc_df <- get_lines_perc_df(dialogues_df, char_lines_df)
-  lines_perc_plot <- get_lines_perc_plot(lines_perc_df)
+  lines_perc_plot <- get_lines_perc_plot(lines_perc_df, char)
   return(lines_perc_plot)
 }
 
@@ -27,18 +27,19 @@ get_lines_perc_df <- function(dialogues_df, char_lines_df) {
   return(lines_perc_df)
 }
 
-get_lines_perc_plot <- function(lines_perc_df) {
+get_lines_perc_plot <- function(lines_perc_df, char) {
   int_breaks <- seq(min(lines_perc_df$season), max(lines_perc_df$season))
+  char_color <- MyPalette[[str_to_title(char)]]
   lines_perc_plot <- ggplot(
     lines_perc_df,
     aes(x = season, y = lines_perc)
   ) +
-    geom_line() +
-    geom_point() +
+    geom_line(size = 4, color = char_color) +
+    geom_point(size = 3) +
     scale_x_continuous(breaks = int_breaks) +
     scale_y_continuous(labels = percent) +
     xlab("season") +
     ylab("") +
-    theme_grey(base_size = 18)
+    theme_base(base_size = 18) 
   return(lines_perc_plot)
 }
