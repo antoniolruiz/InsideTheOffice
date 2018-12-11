@@ -232,10 +232,6 @@ It is interesting to see spike in viewership for episodes 14 and 15 in season 5,
 
 ## Executive Summary.
 
-## Req. Provide a short nontechnical summary of the most revealing findings of your analysis written for a nontechnical audience. The length should be approximately two pages (if we were using pages…) Take extra care to clean up your graphs, ensuring that best practices for presentation are followed.
-
-## Req. cont. Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. 
-
 Upon completing an exploratory analysis through the dialogues of the sitcom "The Office", we want to share some of the most relevant findings we made. Guided by our initial framework, we focused on exploring the data behind individual characters, how they interacted, and other factors that related the show to its social setting.
 
 Our dive into individual characters helped us see how the 5 top characters dominate the dialogues in the show, as each one of them has between 4 and 12 thousand lines of speech. This is relevant, as some of the main characters didn't participate in all 9 seasons.
@@ -287,9 +283,7 @@ viewers_graph()
 
 ## Interactive component.
 
-## Instructions: Select one (or more) of your key findings to present in an interactive format. Be selective in the choices that you present to the user; the idea is that in 5-10 minutes, users should have a good sense of the question(s) that you are interested in and the trends you’ve identified in the data. In other words, they should understand the value of the analysis, be it business value, scientific value, general knowledge, etc.
-
-As we previously mentioned, it was very interesting to see how the interaction of characters evolved in the show, so we decided to move those elements [here](https://opardo.shinyapps.io/shiny/). Although we reached some conclusions through this analysis  - confirming what our experience as viewers had told us - we believe the real finding here is that summarizing data in a graphical way allows the user to process information faster and easier.
+As we previously mentioned, it was very interesting to see how the interaction of characters evolved in the show, so we decided to move those elements to a [Shiny App](https://opardo.shinyapps.io/shiny/). Although we reached some conclusions through this analysis  - confirming what our experience as viewers had told us - we believe the real finding here is that summarizing data in a graphical way allows the user to process information faster and easier.
 
 As a starting point, may we suggest you see in which season do Andy's interactions with the cast start, or how do interactions with Michael change after season 7?
 
