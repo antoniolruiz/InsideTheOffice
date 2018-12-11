@@ -572,13 +572,15 @@ phrase_graph <- function(words_df){
     summarise(Freq = n()) %>% 
     arrange(-Freq)
   
+  characters <- unique(thats_what_she_said$speaker)
+  palette_updated <- update_palette(characters, MyPalette)
   ggplot(thats_what_she_said, aes(x=reorder(speaker, Freq), y=Freq, fill = speaker)) +
     geom_col(color = 'black') + 
     coord_flip() +
     labs(title = "    'That'\n                  -She", 
          x = "", 
          y="Total number of gags") +
-    scale_colour_manual(values = MyPalette, aesthetics = "fill") +
+    scale_colour_manual(values = palette_updated, aesthetics = "fill") +
     theme(legend.position="none")
 }
 
@@ -590,4 +592,12 @@ filter_words_df <- function(words_df, character, seasons){
   } else {
     return()
   }
+}
+
+update_palette <- function(characters, MyPalette) {
+  sec_characters <- characters[!characters %in% names(MyPalette)]
+  MyPalette_sec <- rep('#686868', length(sec_characters))
+  names(MyPalette_sec) <- sec_characters
+  UpdatedPalette <- append(MyPalette, MyPalette_sec)
+  return(UpdatedPalette)
 }
