@@ -37,7 +37,7 @@ get_most_shared_scenes_plot <- function(shared_scenes_df) {
   ) +
     geom_bar(stat = "identity", colour='black') +
     xlab("") +
-    ylab("") +
+    ylab("scenes") +
     theme_base(base_size = 18) +
     scale_colour_manual(values = UpdatedPalette, aesthetics = "fill") +
     theme(legend.position="none")

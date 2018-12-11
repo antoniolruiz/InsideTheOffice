@@ -36,7 +36,7 @@ get_most_mentioned_names_plot <- function(freq_names_df) {
   ) +
     geom_bar(stat = "identity", colour = "black") +
     xlab("") +
-    ylab("") +
+    ylab("times") +
     theme_base(base_size = 18) +
     scale_colour_manual(values = UpdatedPalette, aesthetics = "fill") +
     theme(legend.position="none")

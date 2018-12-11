@@ -16,7 +16,7 @@ for (file in function_files){
 
 ui <- navbarPage(
   title = h4("Inside The Office"),
-  theme = shinytheme("spacelab"),
+  theme = shinytheme("superhero"),
   tabPanel(
     title = h4("Interactions"),
     sidebarPanel(

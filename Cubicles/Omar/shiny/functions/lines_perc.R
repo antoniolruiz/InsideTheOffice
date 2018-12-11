@@ -39,7 +39,7 @@ get_lines_perc_plot <- function(lines_perc_df, char) {
     scale_x_continuous(breaks = int_breaks) +
     scale_y_continuous(labels = percent) +
     xlab("season") +
-    ylab("") +
+    ylab("dialogues") +
     theme_base(base_size = 18) 
   return(lines_perc_plot)
 }
