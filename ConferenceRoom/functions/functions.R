@@ -564,7 +564,7 @@ get_most_shared_scenes_plot <- function(shared_scenes_df) {
     aes(x = reorder(speaker, -shared_scenes), y = shared_scenes, fill= speaker)
   ) +
     geom_bar(stat = "identity", color = 'black') +
-    labs(title="Jim's most common character interactions") +
+    labs(title="Jim's most common character interactions in season six.") +
     labs(x="Character", y="Shared scenes") + 
     theme(legend.position="none") +
     scale_colour_manual(values = MyPalette, aesthetics = "fill") 
@@ -585,7 +585,7 @@ phrase_graph <- function(words_df){
   ggplot(thats_what_she_said, aes(x=reorder(speaker, Freq), y=Freq, fill = speaker)) +
     geom_col(color = 'black') + 
     coord_flip() +
-    labs(title = "    'That'\n                  -She", 
+    labs(title = "That's what she said.", 
          x = "", 
          y="Total number of gags") +
     scale_colour_manual(values = palette_updated, aesthetics = "fill") +
