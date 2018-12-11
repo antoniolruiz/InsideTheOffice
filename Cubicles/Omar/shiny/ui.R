@@ -17,23 +17,23 @@ for (file in function_files){
 ui <- navbarPage(
   title = h4("Inside The Office"),
   theme = shinytheme("spacelab"),
-  tabPanel(
-    title = h4("Summary"),
-    sidebarPanel(
-      h2("Settings"),
-      hr(),
-      width = 2
-    ),
-    mainPanel(
-      column(
-        12,
-        align = "center",
-        h3("Brand Status")
-        # dataTableOutput("summary_plot", height=500)
-      ),
-      width = 10
-    )
-  ),
+  # tabPanel(
+  #   title = h4("Summary"),
+  #   sidebarPanel(
+  #     h2("Settings"),
+  #     hr(),
+  #     width = 2
+  #   ),
+  #   mainPanel(
+  #     column(
+  #       12,
+  #       align = "center",
+  #       h3("Brand Status")
+  #       # dataTableOutput("summary_plot", height=500)
+  #     ),
+  #     width = 10
+  #   )
+  # ),
   tabPanel(
     title = h4("Analysis by Character"),
     sidebarPanel(
@@ -99,6 +99,19 @@ ui <- navbarPage(
               style="display:inline-block",
               hr(),
               plotOutput("avg_dialogues_length", height = 300)
+            )
+          )
+        ),
+        tabPanel(
+          "Lines Percentage",
+          h2(textOutput("lines_perc_title")),
+          column(
+            10,
+            align = "center",
+            div(
+              style="display:inline-block",
+              hr(),
+              plotOutput("lines_perc", height = 300)
             )
           )
         )

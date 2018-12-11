@@ -30,6 +30,7 @@ get_avg_dialogues_length_plot <- function(avg_dl_df) {
     aes(x = season, y = avg_dl)
   ) +
     geom_line() +
+    geom_point() +
     scale_x_continuous(breaks = int_breaks) +
     xlab("season") +
     ylab("words") +

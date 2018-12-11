@@ -11,6 +11,7 @@ library(ggplot2)
 library(R.utils)
 library(forcats)
 library(stringr)
+library(scales)
 
 function_files <- sourceDirectory("functions")
 for (file in function_files){
@@ -23,8 +24,11 @@ shinyServer(function(input, output) {
     speaker <- input$speaker
     seasons <- input$seasons
     
-    path <- "data/theoffice_words.csv"
-    words_df <- read_csv(path)
+    words_path <- "data/theoffice_words.csv"
+    dialogues_path <- "data/theoffice_words.csv"
+    words_df <- read_csv(words_path)
+    dialogues_df <- read_csv(dialogues_path)
+    
     chars <- words_df %>% 
       group_by(speaker) %>% 
       summarise(Freq = n()) %>% 
@@ -70,5 +74,16 @@ shinyServer(function(input, output) {
       shiny::validate(need(input$seasons,"Check at least one Season!"))
       return(get_avg_dialogues_length(filtered_words_df))
     }, height = 300, width = 750)
+    
+    # LINES PERCENTAGE
+    output$lines_perc_title <- renderText({
+      return(paste0("What percentage of all the dialogues belong to ", toupper(speaker), "?"))
+    })
+    
+    output$lines_perc <- renderPlot({
+      shiny::validate(need(input$seasons,"Check at least one Season!"))
+      return(get_lines_perc(dialogues_df, speaker, seasons))
+    }, height = 300, width = 750)
+    
   })
 })
