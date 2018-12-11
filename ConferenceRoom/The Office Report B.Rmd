@@ -238,7 +238,7 @@ It is interesting to see spike in viewership for episodes 14 and 15 in season 5,
 
 Upon completing an exploratory analysis through the dialogues of the sitcom "The Office", we want to share some of the most relevant findings we made. Guided by our initial framework, we focused on exploring the data behind individual characters, how they interacted, and other factors that related the show to its social setting.
 
-Our dive into individual characters helped us see how the 5 top characters dominate the dialogues in the show, as each one of them has between 4 and 12 thousand lines of speech. This is relevant, as some of the main characters isn't participate in all 9 seasons.
+Our dive into individual characters helped us see how the 5 top characters dominate the dialogues in the show, as each one of them has between 4 and 12 thousand lines of speech. This is relevant, as some of the main characters didn't participate in all 9 seasons.
 
 ```{r es_1, echo=TRUE}
 
@@ -262,32 +262,28 @@ deleted_scenes_graph(theoffice_df)
 
 ```
 
-
 Regarding our review on the interactions amongst characters, we were able to identify some unexpected relationships, like Jim saying Dwight's name more than Pam's.
 
 We could further explain our findings, but we'd rather invite you to make your own. [This link](https://opardo.shinyapps.io/shiny/) contains a Shiny App where you can explore more information about the show's dialogues through all 9 seasons.
 
+For the final area under study, we wanted to understand the setting in which the show developed. We believe that the two questions that held the most important findings dealt with gender equality and with ratings.
 
-
-Beyond the show
+We know that the cast is male-dominated, but for a show that lasted 9 years, it was interesting to see if female characters gained more importance in the dialogues. Although we found that the proportion of male to female dialogues didn't change drastically in the show, we could see that secondary characters' dialogues were dominated by females (otherwise, with the large amount of dialogues by the main cast, this proportion would fall instead of rise).
 
 ```{r es_4, echo=TRUE}
 
-deleted_scenes_graph(theoffice_df)
+dialogues_by_gen_graph(dialogues_df)
 
 ```
+
+Something about ratings
 
 ```{r es_5, echo=TRUE}
 
-deleted_scenes_graph(theoffice_df)
+viewers_graph()
 
 ```
 
-
-
-
-### Help: We must choose what goes here, as a mini-story line
-### Help: Further cleaning (adjusting font sizes) will be needed.
 
 ## Interactive component.
 
