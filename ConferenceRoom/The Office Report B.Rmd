@@ -236,11 +236,14 @@ It is interesting to see spike in viewership for episodes 14 and 15 in season 5,
 
 ## Req. cont. Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. 
 
-Upon completing an exploratory analysis through the dialogues of the sitcom "The Office", we want to share some of the most relevant findings we made. Guided by our initial framework, we 
+Upon completing an exploratory analysis through the dialogues of the sitcom "The Office", we want to share some of the most relevant findings we made. Guided by our initial framework, we focused on exploring the data behind individual characters, how they interacted, and other factors that related the show to its social setting.
 
 Individual Chars
 
 Interactions
+There were some interactions that 
+
+We could further explain our findings, but we'd rather invite you to make your own. [This link](https://opardo.shinyapps.io/shiny/) contains a Shiny App where you can explore more inrotmation about the show's dialogues through all 9 seasons.
 
 Beyond the show
 
@@ -254,13 +257,12 @@ Beyond the show
 
 ## Instructions: Select one (or more) of your key findings to present in an interactive format. Be selective in the choices that you present to the user; the idea is that in 5-10 minutes, users should have a good sense of the question(s) that you are interested in and the trends you’ve identified in the data. In other words, they should understand the value of the analysis, be it business value, scientific value, general knowledge, etc.
 
-As we previously mentioned, it was very interesting to see how the interaction of characters evolved in the show, so we decided to move those elements to (path for Shiny App). Although we reached some conclusions through this analysis  - confirming what our experience as viewers had told us - we believe the real finding here is that summarizing data in a graphical way allows the user to process information faster and easier.
+As we previously mentioned, it was very interesting to see how the interaction of characters evolved in the show, so we decided to move those elements [here](https://opardo.shinyapps.io/shiny/). Although we reached some conclusions through this analysis  - confirming what our experience as viewers had told us - we believe the real finding here is that summarizing data in a graphical way allows the user to process information faster and easier.
 
 As a starting point, may we suggest you see in which season do Andy's interactions with the cast start, or how do interactions with Michael change after season 7?
 
 By creating an App that lets users choose their favorite characters and see who they interacted with through each season, we avoided cluttering this document with text, and help our readers reach their own conclusions. We expect that the interactive component of this project will assist our audience in improving their knowledge in popular culture and remembering the fun they had while watching the show.
 
-### Help: Link to component?
 
 ## Conclusion.
 
