@@ -22,7 +22,8 @@ vars <-  get_vars(theoffice_df)
 
 wrylies_dialogue_df <- vars[[1]]
 dialogues_df <- vars[[2]]
-words_df2 <-  vars[[4]]
+words_df <- vars[[3]]
+words_df2 <- vars[[4]]
 
 ```
 
