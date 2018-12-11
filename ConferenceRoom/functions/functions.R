@@ -216,7 +216,7 @@ most_lines_graph <- function(dialogues_df){
   
   ggplot(dialogues_by_char, aes(x = reorder(speaker, -Freq), y = Freq, fill= speaker)) + 
          geom_bar(stat = 'identity', colour='black') +
-         labs(title = "Michael, Dwight and Jim speak the most lines in the series", 
+         labs(title = "Michael, Dwight and Jim have the highest number of dialogues in the series", 
               x = "Character", 
               y="Number of lines (in thousands)") + 
          scale_colour_manual(values = MyPalette, aesthetics = "fill") + 
@@ -235,7 +235,7 @@ most_words_graph <- function(words_df){
   
   ggplot(words_by_char, aes(x = reorder(speaker, -Freq), y = Freq, fill= speaker)) + 
     geom_col(color = 'black') + 
-    labs(title = "Michael, Dwight and Jim also speak the most words in the show", 
+    labs(title = "Michael, Dwight and Jim also have the highest amount of words said in the show", 
          x = "Character", 
          y="Number of words (in thousands)") + 
     scale_colour_manual(values = MyPalette, aesthetics = "fill") + 
@@ -260,8 +260,8 @@ screen_distribution_graph <-function(dialogues_df){
                               value, 
                               .desc = FALSE))) +
     geom_point(aes(color = attribute)) + 
-    labs(title = "Do more lines also mean important lines?", 
-         x = "Number of characters", 
+    labs(title = "Does talking more also mean that you say the most important things?", 
+         x = "Number of letters", 
          y="Character") + 
     theme(legend.position="top", 
           legend.title=element_blank() ) + 
@@ -287,7 +287,7 @@ length_words_graph <- function(words_df){
                               value, 
                               .desc = FALSE))) +
     geom_point(aes(color = attribute)) + 
-    labs(title = "How long are the words characters use?", 
+    labs(title = "Average length of words vs longest word used by each character.", 
          x = "Number of letters", 
          y = "Character") + 
     theme(legend.position="top", legend.title=element_blank() ) + 
@@ -425,7 +425,7 @@ screen_time_graph <- function(words_df){
 }
 
 
-character_sex_graph <-  function(){
+character_gender_graph <-  function(){
   gen <- read.csv(file="data/main_cast_gender.csv", header=TRUE, sep=",")
   
   ggplot(gen, aes(x=fct_infreq(gen$gender))) + 
@@ -513,7 +513,7 @@ viewers_graph <-  function(){
   
   ratings$Season <- as.factor(ratings$Season)
   ggplot(data = ratings, aes(x = Episode_overall, y = Viewers, fill = Season)) +
-    geom_bar(stat = 'identity',colour = "black") + 
+    geom_bar(stat = 'identity') + 
     #  facet_grid(~Season) +
     labs(title="Did The Office maintain its viewers hooked from start to finish?") +
     labs(x="Episode", y="Viewers (in millions)") + 

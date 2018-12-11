@@ -28,8 +28,6 @@ words_df <-  vars[[3]]
 
 ## Introduction.
 
-### Explain why you chose this topic, and the questions you are interested in studying.
-
 The Office is a television sitcom that aired on NBC from 2005 to 2013. It shows us the everyday lives of office employees from a paper company called Dunder Mifflin Paper Company in Scranton, Pennsylvania. While this does not seem like something interesting to watch, the show was able to captivate an average of 8 million US viewers for 9 years. As many people, we have enjoyed watching this show, and because of it, we have decided to use our data visualization techniques to solve some complex questions about the series. Our motivation comes from the desire to increase our knowledge of the sitcom in a quantitative manner, and hence, we created a framework with three types of questions: 
 
 * Can we get a better understanding on each character's specific profile, like who says the most jokes, or who holds the most airtime?
@@ -40,15 +38,11 @@ The Office is a television sitcom that aired on NBC from 2005 to 2013. It shows 
 
 We expect to be able to solve them mostly based on the data we obtained from [(1)](https://docs.google.com/spreadsheets/d/18wS5AAwOh8QO95RwHLS95POmSNKA2jjzdt0phrxeAE0/edit#gid=747974) and [(2)](https://en.wikipedia.org/wiki/List_of_The_Office_(U.S._TV_series)_episodes) and use this framework questions as a starting point.
 
-### List team members and a description of how each contributed to the project This goes last within the section.
-
-Every member of the team contributed in the general tasks, which include but are not limited to: cleaning the data, analyzing it, creating the graphs, the interactive component and the documantation. However, we seized our strenghts and some focus more in certain aspects than others: Omar focused in the data cleaning process and the interactive component. Antonio worked in the creation of graphs and general functions for the documentation, also with the final reviewing and editing of our final document. Jose worked in the general structure of the document, explaining the methods that were used and the structure of our anaylisis and graphs. \\   
+Every member of the team contributed in the general tasks, which include but are not limited to: cleaning the data, analyzing it, creating the graphs, the interactive component and the documantation. However, we seized our strenghts and some focus more in certain aspects than others: Omar focused in the data cleaning process and the interactive component. Antonio worked in the creation of graphs and general functions for the documentation, also with the final reviewing and editing of our final document. Jose worked in the general structure of the document, explaining the methods that were used and the structure of our anaylisis and graphs.    
 
 We also tried to share our expertise and knowledge on certain domains by solving each other's questions and doubts, agreeing on what steps should we take in the exploration of our data. We did this in order to maximize what we could learn from the assignment. 
 
 ## A first glimpse into our data.
-
-### Describe how the data was collected, how you accessed it, and any other noteworthy features.
 
 Given the sitcom's large number of fans, we have found several websites dedicated to it. Among them, we found a repository called officequotes [4]. This repository includes every dialogue from the script, specifying the season, episode and scene in which it was said, as well as its speaker and whether the scene was edited out of the show or not.
 
@@ -59,8 +53,6 @@ Furthermore, one of the questions required us to retrieve data that wasn't avail
 Finally, it is important to notice another element in the analysis: a stopword dictionary. We used the `(stopwords)` library to drop (and analyze) common words in the language, so that we only retain meaningful information in our dataset.
 
 ## Analyzing the quality of our data.
-
-### Provide a detailed, well-organized description of data quality, including textual description, graphs, and code.
 
 We made functions for every data manipulation and chart operation that would take more than a single line. This allowed us to show a cleaner document where the reader can focus on understanding the analysis structure, rather than reading hundreds of lines of code. The file that contains these functions lies in `../ConferenceRoom/functions/functions.R`, in case the reader would wish to take a closer look.
 
@@ -84,21 +76,17 @@ MyPalette <-  get_palette()
 
 ```
 
-We also inspected for any N/As in the dataset and found none.
+We also inspected for any **N/A** in the dataset and found none.
 
-This was great progress to start our analysis, as we could now focus on the text of the actual dialogues, the main point of this project. We followed the process by removing the wrylies, which allowed us to focus on dialogues rather than instructions. We also dropped punctuation and removed capitalization from the document. Finally, we tied common expressions throughout the series, joining each word by an underscore, in order to avoid dropping the stopwords on these expressions later in the project.
+This was great progress to start our analysis, with it, we were capable of focusing on the actual dialogues, which is the main objective of this project. We initiated the process by removing the wrylies, which allowed us to focus on dialogues rather than instructions. We also dropped punctuation symbols and removed capitalization from the dataset. Finally, we tied common expressions throughout the series, joining each word by an underscore, in order to avoid dropping the stopwords included in these expressions later in the project.
 
-### Help: Note: Description about ngrams
-
-The file with the whole set up of data clean-up functions and the process rests in `../Cubicles/Omar/clean_data.R` for your review.
+In order to find common expressions, we created ngrams with a function named **count_ngrams ** in our functions script. This function obtained the most used phrases with $n$ words and listed them with the number of times it was said. We reviewed over a thousand phrases and took the ones that were significant for our analysis. The complete list of phrases chosen are in a list called **ct_list** in our functions script.
 
 ## Core analysis.
 
-#### Provide a detailed, well-organized description of your findings, including textual description, graphs, and code. Your focus should be on both the results and the process. Include, as reasonable and relevant, approaches that didn’t work, challenges, the data cleaning process, etc.
+Now that the data has been cleaned, we can move on to figuring out what relevant information can be obtained about the characters, their interactions, and get a better understanding of the series. We are following the framework we devised at the beginning of the project. 
 
-Now that the data had been cleaned, we can move on to figuring out what relevant information can be obtained about the characters, their interactions, and get a better understanding of the series. We are following the framework we devised at the beginning of the project. 
-
-### What can we learn about individual characters?
+#### What can we learn about the characters individually?
 
 Upon organizing the dataset, we realized that one of the most obvious quesitons was if it was possible to determine what characters have the most lines in the show.
 
@@ -128,19 +116,17 @@ screen_distribution_graph(dialogues_df)
 
 ```
 
-### Help: Change "characters" for "letters" in function
-
 From this chart, we can see that the lines of each character in the main cast are of the same length, approximately (although it would be interesting to take a closer look into this matter). We can also determine that the 5 main characters of the show are amongst the 9 characters with the longest line said, which makes sense due to how their characters evolved throughout the show. Particularly, Andy's longest line in the show is the one that ranks the lowest, with Robert, Jan, Erin and DeAngelo topping him for longest dialogue in the show.
 
 Now that we have our hands in this data, we realized that we can go one level deeper, and replicate at a word level what we just did for dialogues. This might shine some light over a character being portrayed as smarter in the show, as the ability to use more complicated words is linked to the perception of intelligence. 
 
+
+### Longest length of a word is almost 30??
 ```{r longest, echo=TRUE}
 
 length_words_graph(words_df)
 
 ```
-
-## Just realized this might be linked to that_what_she_said (19 characters). must drop underscores and re-do
 
 When we first ran this analysis, several characters shared the same number of letters in the longest word. This caught our attention, and we realized we needed to redo the analysis without counting the words joined with an underscore from a previous function. 
 
@@ -154,7 +140,6 @@ crutches_graph(words_df)
 
 ```
 
-### Help: Need to rerun after adding stopwords to understand the effect. Right now, it looks the same.
 
 Given that our dataset has a field that identifies whether a scene was deleted or not, we decided to look into what characters were cut out the most. 
 
@@ -166,7 +151,7 @@ deleted_scenes_graph(theoffice_df)
 
 Unsurprisingly, Michael, Dwight, Jim and Pam lost the most scenes in the show. They are some of the main characters, so it made sense that they lost scenes proportionally.
 
-Andy wasn't in this group, however, which caught our attention. We inspected the data and realized that scenes in the script were only labeled as "deleted" for seasons 1 and 2, before he was added to the cast. 
+Andy wasn't in this group, however, which caught our attention. We inspected the data and realized that scenes in the script were only labeled as "deleted" for seasons 1 and 2, before he was added to the cast. Maybe as the show flourished they stopped deleting scenes?
 
 ### What can we know about groups of characters and about their interactions?
 
@@ -194,32 +179,26 @@ Michael and Dwight are by far the characters with the most screentime throughout
 
 The initial version of this chart was difficult to read, as there were several combinations of characters speaking in the show. This motivated us to dig deeper, as relationships (even fictionals) are built and change over time. In our interactive app, you can choose combinations of characters (only the main cast) and see how they interact season by season. We feel that there is more information in the data than we could write, and invite the reader to see how Jim and Pam's relationship grows after season one.
 
-### Help: We need to redefine colors for this chart. Maybe reducing the number of possibilities. Let's leverage on the interactive component!
-
 ## The Office in real life: portrayal of Corporate America and viewership trends through time
 
 By now we have been asking questions about the show, but the one that most readers might have had since the begining is: How many "that's what she said" gags took place throughout the series?
 
-### Help: This function isn´t summarized
 
+### We need to redefine colors for this chart. 
 ```{r TWSS, echo=TRUE}
 
 phrase_graph(words_df)
-
 
 ```
 
 Given this was Michael's joke, it is clear that he was the main contender, with 24 times. It is interesting to think that the scripts don't carry tone or context, so a character might not have said the phrase as a joke and still ended up in our ranking. This was one of the limitations of our analysis, and it will be hard to fix.
 
-### Check those empty squares!
 
 Now that we talk about it, we wantes to know how balanced was the show in terms of gender equality. We cross referenced our original dataframe with a table containing the genders of the 30 main characters of the show, and dived into it hoping to answer our quesiton.
 
-### Help: Can we switch sex for gender?
-
 ```{r female_male_p, echo=TRUE}
 
-character_sex_graph()
+character_gender_graph()
 
 ```
 
@@ -235,30 +214,9 @@ Throughout the entire series, the answer is no: despite dominating 66% of the ca
 
 It would be interesting to see how, as the series incorporated new characters, the proportion might have changed from season to season.
 
-### Help: This function isn´t summarized
-
 ```{r female_male_s, echo=TRUE}
 
-dialogues_by_gen_graph <- function(dialogues_df){
-  
-
-gen <- read.csv(file="data/main_cast_gender.csv", header=TRUE, sep=",")
-dialogues_by_gen <- merge(dialogues_df, gen, all.x = TRUE) %>%
-  filter(gender %in% c('male', 'female')) %>%
-  group_by(season, gender) %>% 
-  summarize(Freq = n())
-
-dialogues_by_gen$season <- as.factor(dialogues_by_gen$season)
-
-ggplot(dialogues_by_gen, aes(x = season, y = Freq, fill = gender)) + 
-  geom_bar(position = "fill", stat = "identity") + 
-  labs(title = "The ratio of dialogues by gender remains constant through the seasons", 
-       x = "Season", 
-       y = "Percentage of lines") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) 
-
-
-}
+dialogues_by_gen_graph(dialogues_df)
 
 ```
 
@@ -271,7 +229,7 @@ There was a clear evolution in the show, specially in terms of character develop
 viewers_graph()
 
 ```
-### Help: It is tough to read the bars; the outline is too thick when compared to the filling
+
 
 It is interesting to see spike in viewership for episodes 14 and 15 in season 5, that represented over 2.5 times the usual viewership. We investigated the event and realized the episodes aired right after the SuperBowl, making them outliers in the series. 
 
