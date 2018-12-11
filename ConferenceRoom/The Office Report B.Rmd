@@ -238,14 +238,50 @@ It is interesting to see spike in viewership for episodes 14 and 15 in season 5,
 
 Upon completing an exploratory analysis through the dialogues of the sitcom "The Office", we want to share some of the most relevant findings we made. Guided by our initial framework, we focused on exploring the data behind individual characters, how they interacted, and other factors that related the show to its social setting.
 
-Individual Chars
+Our dive into individual characters helped us see how the 5 top characters dominate the dialogues in the show, as each one of them has between 4 and 12 thousand lines of speech. This is relevant, as some of the main characters isn't participate in all 9 seasons.
 
-Interactions
-There were some interactions that 
+```{r es_1, echo=TRUE}
 
-We could further explain our findings, but we'd rather invite you to make your own. [This link](https://opardo.shinyapps.io/shiny/) contains a Shiny App where you can explore more inrotmation about the show's dialogues through all 9 seasons.
+most_lines_graph(dialogues_df)
+
+```
+
+It is also interesting to see how dialogues are driven by stop words, as these words dominate their speech. This is quite inefficient in communication, but we can understand that this might be a consequence of the high number of scenes where characters were facing the documentary camera, without interacting with anyone else. 
+
+```{r es_2, echo=TRUE}
+
+crutches_graph(words_df)
+
+```
+
+We had many laughs over the show, but how many more could we have had? Jim, Dwight and Michael lost over 1,000 scenes in total, due to editing. It's shocking that this happened only during the first 2 seasons! Maybe they were not funny or appropriate, but we can only imagine what they said.
+
+```{r es_3, echo=TRUE}
+
+deleted_scenes_graph(theoffice_df)
+
+```
+
+
+Regarding our review on the interactions amongst characters, we were able to identify some unexpected relationships, like Jim saying Dwight's name more than Pam's.
+
+We could further explain our findings, but we'd rather invite you to make your own. [This link](https://opardo.shinyapps.io/shiny/) contains a Shiny App where you can explore more information about the show's dialogues through all 9 seasons.
+
+
 
 Beyond the show
+
+```{r es_4, echo=TRUE}
+
+deleted_scenes_graph(theoffice_df)
+
+```
+
+```{r es_5, echo=TRUE}
+
+deleted_scenes_graph(theoffice_df)
+
+```
 
 
 
