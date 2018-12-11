@@ -214,12 +214,12 @@ most_lines_graph <- function(dialogues_df){
   
   dialogues_by_char$speaker <- as.factor(dialogues_by_char$speaker)
   
-  plot(ggplot(dialogues_by_char, aes(x = reorder(speaker, -Freq), y = Freq, fill= speaker)) + 
+  ggplot(dialogues_by_char, aes(x = reorder(speaker, -Freq), y = Freq, fill= speaker)) + 
          geom_bar(stat = 'identity', colour='black') +
          labs(title = "Michael, Dwight and Jim speak the most lines in the series", 
               x = "Character", 
               y="Number of lines (in thousands)") + 
-         scale_colour_manual(values = MyPalette, aesthetics = "fill")) + 
+         scale_colour_manual(values = MyPalette, aesthetics = "fill") + 
     theme(legend.position="none")
 }
 
