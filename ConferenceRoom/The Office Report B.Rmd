@@ -22,7 +22,7 @@ vars <-  get_vars(theoffice_df)
 
 wrylies_dialogue_df <- vars[[1]]
 dialogues_df <- vars[[2]]
-words_df <-  vars[[3]]
+words_df2 <-  vars[[4]]
 
 ```
 
@@ -124,7 +124,7 @@ Now that we have our hands in this data, we realized that we can go one level de
 ### Longest length of a word is almost 30??
 ```{r longest, echo=TRUE}
 
-length_words_graph(words_df)
+length_words_graph(words_df2)
 
 ```
 
@@ -182,8 +182,6 @@ The initial version of this chart was difficult to read, as there were several c
 
 By now we have been asking questions about the show, but the one that most readers might have had since the begining is: How many "that's what she said" gags took place throughout the series?
 
-
-### We need to redefine colors for this chart. 
 ```{r TWSS, echo=TRUE}
 
 phrase_graph(words_df)
@@ -229,7 +227,6 @@ viewers_graph()
 
 ```
 
-
 It is interesting to see spike in viewership for episodes 14 and 15 in season 5, that represented over 2.5 times the usual viewership. We investigated the event and realized the episodes aired right after the SuperBowl, making them outliers in the series. 
 
 ## Executive Summary.
@@ -238,7 +235,16 @@ It is interesting to see spike in viewership for episodes 14 and 15 in season 5,
 
 ## Req. cont. Note: “Presentation” here refers to the style of graph, that is, graphs that are cleaned up for presentation, as opposed to the rough ones we often use for exploratory data analysis. 
 
-A version of this section of the document has been prepared as a separate file in `file="../ConferenceRoom/Briefing.Rmd`.
+Upon completing an exploratory analysis through the dialogues of the sitcom "The Office", we want to share some of the most relevant findings we made. Guided by our initial framework, we 
+
+Individual Chars
+
+Interactions
+
+Beyond the show
+
+
+
 
 ### Help: We must choose what goes here, as a mini-story line
 ### Help: Further cleaning (adjusting font sizes) will be needed.
@@ -257,8 +263,6 @@ By creating an App that lets users choose their favorite characters and see who 
 
 ## Conclusion.
 
-### Discuss limitations and future directions, lessons learned.
-
 We believe the main challenge in this project was remaining succinct in a matter we are so passionate about. Upon each answer to a question we might have asked, we could find several more, sometimes more interesting, that we couldn't include in a report. We appreciated the existence of a framework that could guide how to ask each question, how to assign it to a subject, and how to develop it with the objective of communicating our findings to an audience.
 
 Although the dataset was priceless, in that it helped us learn more about the show, we found it was a very limited tool from a Data Scientist perspective. It only helped us determine what was being said during a scene, but not much else. As a follow-up step, we would look into the actions written in the scripts (Wrileys), to understand a bit more of what happened in a given scene. 
@@ -266,8 +270,6 @@ Although the dataset was priceless, in that it helped us learn more about the sh
 A further limitation was our need to establish constructs for the questions we asked to the data. For instance, we had to find an indicator that could help us understand if an average word was long or not; however, for complex questions, building a baseline implied specilating, and we hoped to remain neutral. We lacked the tools, for instance, to conclude whether Michael was indeed smarter than Oscar. This was a trivial one, but it shows the difficulties faced when working with a natural language database.
 
 A step we would like to continue with in this project is to use tf-idf to determine the most important word for a given character or episode, and ask our audience if they can help us identify them. This feature was deemed as a nice-to-have in the assignment, as it was not related to exploratory analysis, and thus wasn't a priority that could be met with the time we had.
-
-### Help: Falta un cierre del documento, pero en este momento no se me ocurre algo. Como un párrafo de lecciones aprendidas sobre el análisis exploratorio y la presentación de datos.
 
 ## Bibliography.
 
