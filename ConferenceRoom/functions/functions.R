@@ -497,7 +497,7 @@ dialogues_by_gen_graph <- function(dialogues_df){
     group_by(season, gender) %>% 
     summarize(Freq = n())
   
-  dialogues_by_gen$season <- as.factor(dialogues_by_gen$season)
+  #dialogues_by_gen$season <- as.factor(dialogues_by_gen$season)
   
   ggplot(dialogues_by_gen, aes(x = season, y = Freq, fill = gender)) + 
     geom_bar(position = "fill", stat = "identity") + 

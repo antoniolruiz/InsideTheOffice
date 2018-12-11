@@ -41,7 +41,7 @@ We expect to be able to solve them mostly based on the data we obtained from [(1
 
 Every member of the team contributed in the general tasks, including cleaning the data, analyzing it, creating the graphs, the interactive component and the documantation. However, we embraced our strenghts and some of us focused more in certain aspects than others: Omar focused in the data cleaning process and the interactive component. Antonio worked in the creation of graphs and general functions for the documentation, and also edited the final version of the document. Jose worked in the general structure of the document, explaining the methods that were used and the structure of our anaylisis and graphs.    
 
-We also tried to share our expertise and knowledge on certain domains by solving each other's questions and doubts, agreeing on what steps should we take in the exploration of our data. We did this in order to maximize what we could learn from the assignment. 
+We also tried to share our expertise and knowledge on certain domains by solving each other's questions and doubts, agreeing on what steps should we take in the exploration of our data. We did this in order to maximize what we could learn from the assignment. All our contributions can be seen in our [github](https://github.com/opardo/InsideTheOffice) repository. 
 
 ## Description of data.
 
@@ -155,7 +155,7 @@ Andy wasn't in this group, however, which caught our attention. We inspected the
 
 ### What can we know about groups of characters and about their interactions?
 
-Now that we know the characters in a closer way, we are moving on to analyzing their interactions. This will help us see if some characcters have cloques (as happens normally in a professional setting), or if a character is referenced more than others.
+Now that we know the characters in a closer way, we are moving on to analyzing their interactions. This will help us see if some characters have cloques (as happens normally in a professional setting), or if a character is referenced more than others.
 
 This question seems like a good starting point, so we modelled their interactions by counting within dialogues how many times other characters are mentioned. 
 
@@ -210,16 +210,6 @@ dialogues_gender_graph(words_df,dialogues_df)
 
 Throughout the entire series, the answer is no: despite dominating 66% of the cast, male characters have over 75% of dialogues and 80% of the words spoken in the show. It must be considered that the main cast holds most of the dialogues, and are mostly men, so these findings were not surprising.
 
-It would be interesting to see how, as the series incorporated new characters, the proportion might have changed from season to season.
-
-```{r female_male_s, echo=TRUE}
-
-dialogues_by_gen_graph(dialogues_df)
-
-```
-
-As the show evolved, there were some slight variations in the proportion of dialogues, peaking during the final season. It remains interesting, though, that despite 4 out of the 5 main characters being male, and Michael and Dwight clearly dominating the show, female characters still got 25% of the dialogues.
-
 There was a clear evolution in the show, specially in terms of character development and changes in cast. In the competitive environment of sitcoms, shows must continually innovate to keep their rating levels, so we decided to take a look at ratings for the show.
 
 ```{r ratings, echo=TRUE}
@@ -264,15 +254,16 @@ We could further explain our findings, but we'd rather invite you to make your o
 
 For the final area under study, we wanted to understand the setting in which the show developed. We believe that the two questions that held the most important findings dealt with gender equality and with ratings.
 
-We know that the cast is male-dominated, but for a show that lasted 9 years, it was interesting to see if female characters gained more importance in the dialogues. Although we found that the proportion of male to female dialogues didn't change drastically in the show, we could see that secondary characters' dialogues were dominated by females (otherwise, with the large amount of dialogues by the main cast, this proportion would fall instead of rise).
+We know that the cast is male-dominated, but for a show that lasted 9 years, it was interesting to see if female characters gained more importance within the dialogues. Although we found that the proportion of male to female dialogues didn't change drastically in the show, we could see that secondary characters' dialogues were dominated by females (otherwise, with the large amount of dialogues by the main cast, this proportion would fall instead of rise).
 
 ```{r es_4, echo=TRUE}
 
-dialogues_by_gen_graph(dialogues_df)
+dialogues_gender_graph(words_df,dialogues_df)
 
 ```
 
-Something about ratings
+
+Finally, our analysis took us to investigate if there was a decline in ratings causing a cancellation of the series. We found that ratings were dropping throughout the seasons, but the decline rate grew for seasons 8 and 9. Was the audience tired of this show? It's not that likely. Was it due to Michael's character leaving the show? Probably. 
 
 ```{r es_5, echo=TRUE}
 
